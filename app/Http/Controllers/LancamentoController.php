@@ -39,7 +39,6 @@ class LancamentoController extends Controller
 
     
     public function contas($aux=null){
-
         $user_id = auth()->user()->id;
         if($user_id) {
             $query = Lancamento::query();

@@ -93,5 +93,4 @@ Route::middleware([
     Route::get('/financeiro/cartao', [Forma_pagController::class,'cartao']);
 
     Route::post('/notificacoes', [NotificacaoController::class,'notificacoes']);
-    
 });

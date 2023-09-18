@@ -53,7 +53,6 @@ if ($resultado === false) {
 }
 
 
-
 $query = "SELECT COUNT(id), id_usuario FROM projetos WHERE data=CURDATE()";
 $resultado = $mysqli->query($query);
 

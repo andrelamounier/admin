@@ -94,6 +94,7 @@
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <span class="dropdown-item dropdown-header" id="texto-notifi">Notificações</span>
+          
           @php
             $totalAlerta=0;
             $lida=0;

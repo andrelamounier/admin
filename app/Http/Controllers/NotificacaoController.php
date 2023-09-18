@@ -22,7 +22,5 @@ class NotificacaoController extends Controller
 
             return response()->json(['status' => true]);
         }
-    
-
 
 }
