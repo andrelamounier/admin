@@ -604,6 +604,7 @@ function deletar_documento(nome,id){
 
  $(document).ready(function() {
     $('#example1').DataTable( {
+      "iDisplayLength": 50,
       responsive: true,
         dom: 'Bfrtip',
         "aaSorting": [],

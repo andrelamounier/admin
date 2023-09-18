@@ -11,13 +11,15 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\Forma_pagController;
+use App\Http\Controllers\NotificacaoController;
 
 Route::view('/termos', 'terms');
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-    'verified'
+    'verified',
+    'notificacao'
 ])->group(function () {
     
     Route::get('/dashboard', function () {
@@ -89,4 +91,6 @@ Route::middleware([
     
     Route::post('/add_cartao', [Forma_pagController::class,'add_cartao']);
     Route::get('/financeiro/cartao', [Forma_pagController::class,'cartao']);
+
+    Route::post('/notificacoes', [NotificacaoController::class,'notificacoes']);
 });

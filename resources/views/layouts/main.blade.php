@@ -84,56 +84,92 @@
             </div>
           </form>
         </div>
-      </li>
+      </li>-->
       <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#" >
+        <a class="nav-link" data-toggle="dropdown" href="#" onclick="notificacoes()" >
           <i class='far fa-bell alinhamento-icone'></i>
           <div id='icon-notifi'>
           
           </div>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header" id="texto-notifi"></span>
-          <?php /*
-            $qutAgenda = Helper::qutAgenda()[0]->qut;
-            $qutContas = Helper::qutContas()[0]->qut;
-            $total=0;
-            $total+=$qutContas+$qutAgenda;
-            if($qutContas>=1){
-              ?>
-              <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item">
-                <i class="fas fa-chart-pie mr-2"></i> <?php echo $qutContas;if($qutContas>1){echo ' Contas';}else{echo' Conta';}echo ' vencendo hoje';?>
-                <span class="float-right text-muted text-sm"></span>
-              </a>
-              <?php
-            }
-            if($qutAgenda>=1){
-              ?>
-              <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item">
-                <i class="fa-solid fa-calendar-days mr-2"></i> <?php echo $qutAgenda;if($qutAgenda>1){echo ' Eventos';}else{echo' Evento';}echo ' na sua agenda hoje';?>
-                <span class="float-right text-muted text-sm"></span>
-              </a>
-              <?php
-            }
-
-            if($total>0){
-              if($total==1){
+          <span class="dropdown-item dropdown-header" id="texto-notifi">Notificações</span>
+          
+          @php
+            $totalAlerta=0;
+            $lida=0;
+          @endphp
+          @foreach($alertas as $item)
+              @switch($item->tipo)
+                @case(1)
+                  <div class="dropdown-divider"></div>
+                  <a href="#" class="dropdown-item">
+                    <i class="fas fa-chart-pie mr-2"></i>
+                      {{$item->qut}}
+                      @if($item->qut>1)
+                        Contas
+                      @else
+                        Conta
+                      @endif
+                        vencendo hoje.
+                    <span class="float-right text-muted text-sm"></span>
+                  </a>
+                @break
+                @case(2)
+                  <div class="dropdown-divider"></div>
+                  <a href="#" class="dropdown-item">
+                    <i class="fa-solid fa-calendar-days mr-2"></i>
+                      {{$item->qut}}
+                      @if($item->qut>1)
+                        Eventos
+                      @else
+                        Evento
+                      @endif
+                        na sua agenda hoje.
+                    <span class="float-right text-muted text-sm"></span>
+                  </a>
+                @break
+                @case(3)
+                  <div class="dropdown-divider"></div>
+                  <a href="#" class="dropdown-item">
+                    <i class="fa-solid fa-list-check mr-2"></i>
+                      {{$item->qut}}
+                      @if($item->qut>1)
+                        Tarefas
+                      @else
+                        Tarefa
+                      @endif
+                        marcada para hoje.
+                    <span class="float-right text-muted text-sm"></span>
+                  </a>
+                @break
+                @default
+              @endswitch
+              @php
+                $totalAlerta++;
+                if($item->lida==0){
+                  $lida++;
+                }
+              @endphp
+          @endforeach
+          @php
+            if($totalAlerta>0){
+              if($totalAlerta==1){
                 $texto=" Notificação";
               }else{
                 $texto=" Notificações";
               }
-               echo "<script>document.getElementById('texto-notifi').innerHTML = '".$total.$texto."';</script>";
-               echo "<script>document.getElementById('icon-notifi').innerHTML = '<span class=\"badge badge-warning navbar-badge \">".$total."</span>';</script>";
+               echo "<script>document.getElementById('texto-notifi').innerHTML = '".$totalAlerta.$texto."';</script>";
+               if($lida>0){
+                echo "<script>document.getElementById('icon-notifi').innerHTML = '<span class=\"badge badge-warning navbar-badge \">".$lida."</span>';</script>";
+               }
+               
             }
-           */
-          ?>
-          
+          @endphp
           <div class="dropdown-divider"></div>
           
         </div>
-      </li> -->
+      </li>
       <li class="nav-item">
        <a class="nav-link" href="{{env('APP_URL')}}/conta" role="button" >
           Conta
@@ -704,5 +740,19 @@
         <!-- /.modal-dialog -->
       </div>
       <!-- /.modal -->
+
+      <script>
+        function notificacoes(){
+          document.getElementById('icon-notifi').innerHTML = '';
+          $.ajax({
+          url:"{{env('APP_URL')}}/notificacoes",
+          headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+          type: 'post',
+          dataType: 'json',
+          success: function(response){
+            }
+        });
+        }
+      </script>
 </body>
 </html>
