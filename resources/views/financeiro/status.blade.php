@@ -140,7 +140,6 @@
 <script>
 $(document).ready(function() {
     $('#example1').DataTable( {
-        "iDisplayLength": 50,
         dom: 'Bfrtip',
         "aaSorting": [],
         language: {
