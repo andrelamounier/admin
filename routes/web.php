@@ -89,5 +89,7 @@ Route::middleware([
     
     Route::post('/add_cartao', [Forma_pagController::class,'add_cartao']);
     Route::get('/financeiro/cartao', [Forma_pagController::class,'cartao']);
+
+
     
 });
