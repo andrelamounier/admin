@@ -100,7 +100,7 @@
                 </div>
                 
                 <div class="form-group col-2">
-                  <label for="nome">Ativo:</label>
+                  <label for="ativo">Ativo:</label>
                   <div class="input-group d-flex justify-content-center">
                     <input class="form-check-input" type="checkbox" id="ativo" name="ativo" checked>
                   </div>

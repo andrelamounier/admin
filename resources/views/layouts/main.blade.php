@@ -585,7 +585,7 @@
               <input type="hidden" id="id_for_cli" name="id_for_cli" class="form-control" >
               <div class="row">
                 <div class="form-group col-8">
-                  <label for="nome">Nome:</label>
+                  <label for="nome_for_cli">Nome:</label>
                   <div class="input-group">
                     <input type="text" id="nome_for_cli" name="nome_for_cli" class="form-control" >
                   </div>
