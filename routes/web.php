@@ -36,6 +36,8 @@ Route::middleware([
     
     Route::get('/financeiro/contas_receber', [LancamentoController::class,'contas_receber']);
     Route::get('/financeiro/contas_pagar', [LancamentoController::class,'contas_pagar']);
+    Route::get('financeiro/baixa_multipla', [LancamentoController::class,'baixa_multipla']);
+    Route::post('baixar_multiplo', [LancamentoController::class,'baixar_multiplo']);
     Route::get('/financeiro/contas', [LancamentoController::class,'contas_all']);
     Route::post('/add_conta', [LancamentoController::class,'add']);
     Route::post('/del_conta', [LancamentoController::class,'del']);
@@ -89,8 +91,6 @@ Route::middleware([
     Route::get('/fonecedor_cliente', [Fonecedor_clienteController::class,'index']);
     Route::post('/add_for_cli', [Fonecedor_clienteController::class,'add_for_cli']);
     
-    Route::post('/add_cartao', [Forma_pagController::class,'add_cartao']);
-    Route::get('/financeiro/cartao', [Forma_pagController::class,'cartao']);
 
     Route::post('/notificacoes', [NotificacaoController::class,'notificacoes']);
 });

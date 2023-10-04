@@ -37,7 +37,7 @@ class LancamentoController extends Controller
     }
 
     
-    public function contas($aux=null){
+    public function contas($aux=null,$view=null){
         $user_id = auth()->user()->id;
         if($user_id) {
             $query = Lancamento::query();
@@ -48,7 +48,11 @@ class LancamentoController extends Controller
             $query->leftJoin('status', 'status.id_status', '=', 'lancamentos.id_status');
             $query->where('lancamentos.id_usuario', $user_id);
             if($aux){
-                $query->where('lancamentos.tipo', $aux);
+                if($view=='financeiro/baixa_multipla'){
+                    $query->where('lancamentos.id_status', 2);
+                }else{
+                    $query->where('lancamentos.tipo', $aux);
+                }
             }
             $query->orderBy('lancamentos.data_vencimento', 'DESC');
             $lancamentos = $query->get();
@@ -57,9 +61,12 @@ class LancamentoController extends Controller
             $centro_custo = Centro_custo::select('nome','id_centro_custo')->where('id_usuario', $user_id)->where('status', '1')->orderBy('nome')->get();
             $status = Statu::select('nome','id_status')->where('status', '1')->orderBy('nome')->get();
 
-
-
-            return view ('financeiro/contas',['tipo' => $aux,'lancamentos' => $lancamentos,'status' => $status, 'produtos' =>$produto,'for_cli' => $for_cli, 'centro_custo' => $centro_custo]);
+            if($view===null){
+                return view ('financeiro/contas',['tipo' => $aux,'lancamentos' => $lancamentos,'status' => $status, 'produtos' =>$produto,'for_cli' => $for_cli, 'centro_custo' => $centro_custo]);
+            }else{
+                return view ($view,['tipo' => $aux,'lancamentos' => $lancamentos,'status' => $status, 'produtos' =>$produto,'for_cli' => $for_cli, 'centro_custo' => $centro_custo]);
+            }
+            
         }else{
             return redirect('/');
         }
@@ -416,4 +423,18 @@ class LancamentoController extends Controller
        
     }
     
+    public function baixa_multipla(Request $request){
+        return $this->contas(2,'financeiro/baixa_multipla');
+    }
+    
+    public function baixar_multiplo(Request $request){
+        $ids=$request->ids;
+        $user_id = auth()->user()->id;
+
+        Lancamento::whereIn('id_lancamento', $ids)
+        ->where('lancamentos.id_usuario', $user_id)
+        ->update(['id_status' => 1]);
+
+        return response()->json(['status' => 'true']);
+    }
 }

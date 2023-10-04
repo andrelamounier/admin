@@ -15,16 +15,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>
-              <?php
-                if($tipo=='1'){
-                  echo "Contas a receber";
-                }else{
-                  echo "Contas a pagar";
-                }
-              ?>
-
-            </h1>
+            <h1>Baixa multipla</h1>
           </div>
         </div>
       </div><!-- /.container-fluid -->
@@ -37,8 +28,8 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <button type="button" class="btn btn-success" onClick="novo()">
-                  Adicionar <i class="fa fa-plus"></i>
+                <button type="button" class="btn btn-success" onClick="baixar()">
+                  Baixar <i class="fa fa-arrow-down"></i>
                 </button>
               </div>
               <!-- /.card-header -->
@@ -53,7 +44,7 @@
                     <th>Status</th>
                     <th>Vencimento</th>
                     <th>Descrição</th>
-                    <th>Ações</th>
+                    <th><input type="checkbox" id="controle" onclick="selecionaTudo()"></th>
                   </tr>
                   </thead>
                   <tbody>
@@ -66,7 +57,7 @@
                           $date = date_create($item->data_vencimento);
                           $total+= ($item->id_status == '1') ? $item->valor:0;
                         ?>
-                        <td data-value="{{str_replace('.',',',$item->valor)}}" id="valor_{{$item->id_lancamento}}">R$ {{number_format($item->valor, 2, ',', '')}}</td>
+                        <td data-value="{{str_replace('.',',',$item->valor)}}" id="valor_{{$item->id_lancamento}}">R$ @if($item->tipo == 2) - @else + @endif{{number_format($item->valor, 2, ',', '')}}</td>
                         <td data-value="{{$item->id_centro_custo}}" id="centro_custos_{{$item->id_lancamento}}">{{$item->centro_custos}}</td>
                         <td data-value="{{$item->id_for_cli}}" id="for_cli_{{$item->id_lancamento}}">{{$item->for_cli}}</td>
                         <td data-value="{{$item->id_produto}}"id="produto_{{$item->id_lancamento}}">{{$item->produto}}</td>
@@ -74,8 +65,7 @@
                         <td data-value="{{$item->data_vencimento}}" id="data_vencimento_{{$item->id_lancamento}}">{{date_format($date, 'd/m/Y')}}</td>
                         <td data-value="{{$item->descricao}}" id="descricao_{{$item->id_lancamento}}">{{$item->descricao}}</td>
                         <td>
-                          <button type="button" onClick="editar({{$item->id_lancamento}})" class="btn btn-primary"><i class="fa fa-pen"></i></button>
-                          <button type="button" onClick="deletar({{$item->id_lancamento}})" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                          <input type="checkbox" name="ids[]" value="{{$item->id_lancamento}}">
                         </td>
                       </tr>
                     @endforeach
@@ -583,6 +573,50 @@ function displayPag(){
     document.querySelector('label[for="valor_contas"]').textContent = "Valor da parcela:";
   }
   
+}
+
+function selecionaTudo(){
+  var checkboxes = document.getElementsByName('ids[]');
+  var controle = document.getElementById("controle");
+
+  if(controle.checked){
+    boll=true;
+  }else{
+    boll=false;
+  }
+  for (var i = 0; i < checkboxes.length; i++) {
+    checkboxes[i].checked = boll;
+  }
+}
+
+function baixar(){
+  var checkboxes = document.getElementsByName('ids[]');
+  var valoresMarcados = [];
+
+  for (var i = 0; i < checkboxes.length; i++) {
+    if(checkboxes[i].checked) {
+      valoresMarcados.push(checkboxes[i].value);
+    }
+  }
+
+  if(valoresMarcados.length>0){
+    $.ajax({
+        url:"{{env('APP_URL')}}/baixar_multiplo",
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: 'post',
+        data: {'ids' : valoresMarcados},
+        dataType: 'json',
+        success: function(response){
+              if(response.status){
+                document.location.reload(true);
+              }else{
+                alert(response.message);
+              }
+          }
+      });
+  }
+    
+
 }
 </script>
 @endsection

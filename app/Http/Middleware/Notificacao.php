@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use App\Models\Alerta;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Carbon;
 
 class Notificacao
 {
@@ -21,14 +20,12 @@ class Notificacao
     public function handle(Request $request, Closure $next)
     {
         $user_id = Auth::id();
-        $dataDeHoje = Carbon::now()->toDateString();
+        $dataDeHoje = now()->toDateString();
 
-
-        $query = Alerta::query();
-        $query->select(['tipo','qut','lida']);
-        $query->where('id_usuario', $user_id);
-        $query-> whereDate('created_at', $dataDeHoje)->get();
-        $dados = $query->get();
+        $dados = Alerta::select('tipo', 'qut', 'lida')
+        ->where('id_usuario', $user_id)
+        ->whereDate('created_at', $dataDeHoje)
+        ->get();
 
         View::share('alertas', $dados);
 
