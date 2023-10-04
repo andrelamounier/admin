@@ -13,7 +13,7 @@ class Lancamento extends Model
     
     protected $fillable = [
         'id_usuario','id_produto','id_centro_custo','id_for_cli','valor','tipo','id_status','created_at','updated_at',
-        'data_vencimento','descricao','id_forma_pags','forma_pag'
+        'data_vencimento','descricao'
     ];
 
     public function produtos(){

@@ -8,7 +8,6 @@ use App\Models\Produto;
 use App\Models\Centro_custo;
 use App\Models\Fonecedor_cliente;
 use App\Models\Statu;
-use App\Models\Forma_pag;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -42,27 +41,25 @@ class LancamentoController extends Controller
         $user_id = auth()->user()->id;
         if($user_id) {
             $query = Lancamento::query();
-            $query->select(['forma_pags.nome','lancamentos.id_produto', 'lancamentos.id_lancamento', 'lancamentos.descricao', 'lancamentos.id_for_cli', 'lancamentos.valor', 'lancamentos.data_vencimento', 'produtos.nome as produto', 'produtos.id_produto as id_produto', 'fornecedor_clientes.nome as for_cli', 'fornecedor_clientes.id_for_cli as id_for_cli', 'centro_custos.nome as centro_custos', 'centro_custos.id_centro_custo as id_centro_custo', 'status.nome as status', 'status.id_status as id_status', 'lancamentos.tipo']);
+            $query->select(['lancamentos.id_produto', 'lancamentos.id_lancamento', 'lancamentos.descricao', 'lancamentos.id_for_cli', 'lancamentos.valor', 'lancamentos.data_vencimento', 'produtos.nome as produto', 'produtos.id_produto as id_produto', 'fornecedor_clientes.nome as for_cli', 'fornecedor_clientes.id_for_cli as id_for_cli', 'centro_custos.nome as centro_custos', 'centro_custos.id_centro_custo as id_centro_custo', 'status.nome as status', 'status.id_status as id_status', 'lancamentos.tipo']);
             $query->leftJoin('produtos', 'produtos.id_produto', '=', 'lancamentos.id_produto');
             $query->leftJoin('centro_custos', 'centro_custos.id_centro_custo', '=', 'lancamentos.id_centro_custo');
             $query->leftJoin('fornecedor_clientes', 'fornecedor_clientes.id_for_cli', '=', 'lancamentos.id_for_cli');
             $query->leftJoin('status', 'status.id_status', '=', 'lancamentos.id_status');
-            $query->leftJoin('forma_pags', 'forma_pags.id_pag', '=', 'lancamentos.id_forma_pags');
             $query->where('lancamentos.id_usuario', $user_id);
             if($aux){
                 $query->where('lancamentos.tipo', $aux);
             }
-            $query->orderBy('lancamentos.data_vencimento', 'desc');
+            $query->orderBy('lancamentos.data_vencimento', 'DESC');
             $lancamentos = $query->get();
             $produto = Produto::select('nome','id_produto')->where('id_usuario', $user_id)->orderBy('nome')->get();
             $for_cli = Fonecedor_cliente::select('nome','id_for_cli')->where('id_usuario', $user_id)->orderBy('nome')->get();
             $centro_custo = Centro_custo::select('nome','id_centro_custo')->where('id_usuario', $user_id)->where('status', '1')->orderBy('nome')->get();
             $status = Statu::select('nome','id_status')->where('status', '1')->orderBy('nome')->get();
-            $cartao = Forma_pag::where('id_usuario', $user_id)->where('tipo', 1)->orderBy('nome')->get();
 
 
 
-            return view ('financeiro/contas',['cartao' => $cartao,'tipo' => $aux,'lancamentos' => $lancamentos,'status' => $status, 'produtos' =>$produto,'for_cli' => $for_cli, 'centro_custo' => $centro_custo]);
+            return view ('financeiro/contas',['tipo' => $aux,'lancamentos' => $lancamentos,'status' => $status, 'produtos' =>$produto,'for_cli' => $for_cli, 'centro_custo' => $centro_custo]);
         }else{
             return redirect('/');
         }
@@ -74,12 +71,11 @@ class LancamentoController extends Controller
             $array_input = [];
             $array_data = [];
             $query = Lancamento::query();
-            $query->select(['forma_pags.nome','lancamentos.id_produto', 'lancamentos.id_lancamento', 'lancamentos.descricao', 'lancamentos.id_for_cli', 'lancamentos.valor', 'lancamentos.data_vencimento', 'produtos.nome as produto', 'produtos.id_produto as id_produto', 'fornecedor_clientes.nome as for_cli', 'fornecedor_clientes.id_for_cli as id_for_cli', 'centro_custos.nome as centro_custos', 'centro_custos.id_centro_custo as id_centro_custo', 'status.nome as status', 'status.id_status as id_status', 'lancamentos.tipo']);
+            $query->select(['lancamentos.id_produto', 'lancamentos.id_lancamento', 'lancamentos.descricao', 'lancamentos.id_for_cli', 'lancamentos.valor', 'lancamentos.data_vencimento', 'produtos.nome as produto', 'produtos.id_produto as id_produto', 'fornecedor_clientes.nome as for_cli', 'fornecedor_clientes.id_for_cli as id_for_cli', 'centro_custos.nome as centro_custos', 'centro_custos.id_centro_custo as id_centro_custo', 'status.nome as status', 'status.id_status as id_status', 'lancamentos.tipo']);
             $query->leftJoin('produtos', 'produtos.id_produto', '=', 'lancamentos.id_produto');
             $query->leftJoin('centro_custos', 'centro_custos.id_centro_custo', '=', 'lancamentos.id_centro_custo');
             $query->leftJoin('fornecedor_clientes', 'fornecedor_clientes.id_for_cli', '=', 'lancamentos.id_for_cli');
             $query->leftJoin('status', 'status.id_status', '=', 'lancamentos.id_status');
-            $query->leftJoin('forma_pags', 'forma_pags.id_pag', '=', 'lancamentos.id_forma_pags');
             $query->where('lancamentos.id_usuario', $user_id);
             
            if($tipoAux && $tipoAux == '3'){
@@ -100,11 +96,6 @@ class LancamentoController extends Controller
             if($request->has('status_consulta_contas')){
                 $array_input['status'] = $request->status_consulta_contas;
                 $query->whereIn('lancamentos.id_status', $request->status_consulta_contas);
-            }
-
-            if($request->has('pag_consulta_contas')){
-                $array_input['pag'] = $request->pag_consulta_contas;
-                $query->whereIn('lancamentos.id_forma_pags', $request->pag_consulta_contas);
             }
             
             if($request->has('produto_consulta_contas')){
@@ -127,8 +118,6 @@ class LancamentoController extends Controller
             $for_cli = Fonecedor_cliente::select('nome','id_for_cli')->where('id_usuario', $user_id)->orderBy('nome')->get();
             $centro_custo = Centro_custo::select('nome','id_centro_custo')->where('id_usuario', $user_id)->where('status', '1')->orderBy('nome')->get();
             $status = Statu::select('nome','id_status')->where('status', '1')->orderBy('nome')->get();
-            $cartao = Forma_pag::where('id_usuario', $user_id)->where('tipo', 1)->orderBy('nome')->get();
-
 
             switch ($tipoAux) {
                 case 3:
@@ -184,7 +173,7 @@ class LancamentoController extends Controller
                     $grafico=[];
                     break;
             }
-            return view ('financeiro/consulta_contas',['cartao' => $cartao,'grafico'=> $grafico,'array_data'=> $array_data,'array_input'=> $array_input,'tipo' => $tipoAux,'lancamentos' => $lancamentos,'status' => $status, 'produtos' =>$produto,'for_cli' => $for_cli, 'centro_custo' => $centro_custo]);
+            return view ('financeiro/consulta_contas',['grafico'=> $grafico,'array_data'=> $array_data,'array_input'=> $array_input,'tipo' => $tipoAux,'lancamentos' => $lancamentos,'status' => $status, 'produtos' =>$produto,'for_cli' => $for_cli, 'centro_custo' => $centro_custo]);
             
         }else{
             return redirect('/');
@@ -219,6 +208,7 @@ class LancamentoController extends Controller
                 } catch (\Exception $e) {
                     return response()->json(['status' => false, 'message' => 'Erro 303, tente novamente mais tarde ou entre em contado com suporte.']);
                 }
+                
                 $lancamento->valor=$valor;
                 $lancamento->descricao=$descricao;
                 $lancamento->id_produto=$produto;
@@ -232,7 +222,7 @@ class LancamentoController extends Controller
                     return response()->json(['status' => false, 'message' => 'Erro 304, tente novamente mais tarde ou entre em contado com suporte.']);
                 }
             }else{
-                if($pag_contas==0){
+                
                     if($repeticao>=1 && $qut>=1){  
                         $lancamento = new Lancamento;
                         $lancamento->valor=$valor;
@@ -310,52 +300,7 @@ class LancamentoController extends Controller
                             return response()->json(['status' => false, 'message' => 'Erro 302, tente novamente mais tarde ou entre em contado com suporte.']);
                         }        
                     }
-                }else{
-                    try {
-                        $forma_pag = Forma_pag::where('id_pag', $pag_contas)->where('id_usuario', $user_id)->firstOrFail();
-                    } catch (\Exception $e) {
-                        return response()->json(['status' => false, 'message' => 'Erro 231, tente novamente mais tarde ou entre em contado com suporte.']);
-                    }
-                    $data_vencimento_aux=$data_vencimento;
-                    for($i=0;$i<$parcelas;$i++){
-                        if($i>=1){
-                            
-                            $dia= date('d', strtotime($data_vencimento_aux));
-                                    $mes= date('m', strtotime($data_vencimento_aux));
-                                    $ano = date('Y', strtotime($data_vencimento_aux. " + $i months"));
-                                    $data_aux=$ano.'-'.$mes.'-1';
-                                    $mes = date('m', strtotime($data_aux. " + $i months"));
-                                    $data_aux="$ano-$mes-1";
-                                    
-                                    if('31'==$dia ||  ($mes==2 && $dia>=29 )){
-                                        $dataDateTime = Carbon::createFromFormat("Y-m-d", $data_aux);
-                                        $data_vencimento = $dataDateTime->endOfMonth();;
-                                    }else{
-                                        $data_vencimento = date('Y-m-d', strtotime($data_vencimento_aux. " + $i months"));
-                                    }
-                        }
-                        $lancamento = new Lancamento;
-                        $lancamento->valor=$valor;
-                        $lancamento->descricao=$descricao;
-                        $lancamento->id_produto=$produto;
-                        $lancamento->id_status='2';
-                        $lancamento->id_centro_custo=$centro_custos;
-                        $lancamento->id_for_cli=$for_cli;
-                        $lancamento->data_vencimento=$data_vencimento;
-                        $lancamento->tipo=$tipo;
-                        $lancamento->id_usuario = $user_id;
-                        $lancamento->forma_pag=2;
-                        $lancamento->id_forma_pags=$forma_pag->id_pag;
-
-
-                        try{
-                            $lancamento->save();
-                        }catch (\Exception $e) {
-                            return response()->json(['status' => false, 'message' => 'Erro 305, tente novamente mais tarde ou entre em contado com suporte.']);
-                        } 
-                    }
-
-                }
+                
             }
         }else{
             return response()->json(['status' => false, 'message' => 'Erro 202, tente novamente mais tarde ou entre em contado com suporte.']);

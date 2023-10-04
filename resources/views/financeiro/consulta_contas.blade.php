@@ -69,16 +69,7 @@
                         @endforeach
                       </select>
                     </div>
-                    <?php if($tipo!='3'){ ?>
-                    <div class="form-group col-md-4 col-12">
-                      <label for="pag_consulta_contas">Forma de pagamento:</label>
-                      <select id="pag_consulta_contas"  multiple name="pag_consulta_contas[]"class="form-control select2bs4 pag_consulta_contas" >
-                      <option value='0'>À vista</option>
-                      @foreach($cartao as $item)
-                            <option value='{{$item->id_pag}}'>{{$item->nome}}</option>
-                        @endforeach
-                      </select>
-                    </div>
+                    <?php if($tipo!='3'){//Tipo 3 = fluxo de caixa ?>
                     <div class="form-group col-md-4 col-12">
                       <label for="status_consulta_contas">Status:</label>
                       <select id="status_consulta_contas"  multiple name="status_consulta_contas[]"class="form-control select2bs4 status_consulta_contas" >

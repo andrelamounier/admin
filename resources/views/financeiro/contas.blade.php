@@ -50,7 +50,6 @@
                     <th>C. de custo</th>
                     <th>Forn. - Cliente</th>
                     <th>Produto</th>
-                    <th>Form. Pagamento</th>
                     <th>Status</th>
                     <th>Vencimento</th>
                     <th>Descrição</th>
@@ -71,7 +70,6 @@
                         <td data-value="{{$item->id_centro_custo}}" id="centro_custos_{{$item->id_lancamento}}">{{$item->centro_custos}}</td>
                         <td data-value="{{$item->id_for_cli}}" id="for_cli_{{$item->id_lancamento}}">{{$item->for_cli}}</td>
                         <td data-value="{{$item->id_produto}}"id="produto_{{$item->id_lancamento}}">{{$item->produto}}</td>
-                        <td>{{$item->nome == '' ? 'À vista' : $item->nome;}}</td>
                         <td data-value="{{$item->id_status}}" id="status_{{$item->id_lancamento}}">{{$item->status}}</td>
                         <td data-value="{{$item->data_vencimento}}" id="data_vencimento_{{$item->id_lancamento}}">{{date_format($date, 'd/m/Y')}}</td>
                         <td data-value="{{$item->descricao}}" id="descricao_{{$item->id_lancamento}}">{{$item->descricao}}</td>
@@ -125,22 +123,13 @@
               <input type="hidden" id="id_contas" name="id_contas" class="form-control" >
               <input type="hidden" id="tipo_contas" name="tipo_contas" value="{{$tipo}}" class="form-control" >
               <div class="row">
-              <div class="form-group col-md-3 col-12">
-                  <label for="pag_contas">Forma de pagamento:</label>
-                  <select onChange="displayPag()" id="pag_contas" name="pag_contas"class="form-control select2bs4" style="width: 100%;">
-                      <option value='0'>À vista</option>
-                      @foreach($cartao as $item)
-                        <option value='{{$item->id_pag}}'>{{$item->nome}}</option>
-                      @endforeach
-                  </select>
-                </div>
-                <div class="form-group col-md-3 col-12">
+                <div class="form-group col-md-2 col-12">
                   <label for="valor_contas">Valor:</label>
                   <div class="input-group">
                     <input type="text" id="valor_contas" name="valor_contas" class="valor form-control " style="display:inline-block">
                   </div>
                 </div>
-                <div class="form-group col-md-2 col-12">
+                <div class="form-group col-md-3 col-12">
                   <label for="status_contas">Status:</label>
                   <select id="status_contas" name="status_contas"class="form-control select2bs4" style="width: 100%;">
                   <option value=""></option>
@@ -148,6 +137,12 @@
                         <option value='{{$item->id_status}}'>{{$item->nome}}</option>
                     @endforeach
                   </select>
+                </div>
+                <div class="form-group col-md-3 col-12">
+                  <label for="data_vencimento_contas">Data vencimento:</label>
+                  <div class="input-group">
+                    <input type="date" id="data_vencimento_contas"  name="data_vencimento_contas" class="form-control" >
+                  </div>
                 </div>
                 <div class="form-group col-md-4 col-12">
                   <label for="centro_custos_contas">Centro de custo: 
@@ -186,12 +181,6 @@
                       <option value='{{$item->id_produto}}'>{{$item->nome}}</option>
                     @endforeach
                   </select>
-                </div>
-                <div class="form-group col-md-4 col-12">
-                  <label for="data_vencimento_contas">Data vencimento:</label>
-                  <div class="input-group">
-                    <input type="date" id="data_vencimento_contas"  name="data_vencimento_contas" class="form-control" >
-                  </div>
                 </div>
                 <div class="form-group col-md-4 col-12" id="divRepeticao">
                   <label for="repeticao_contas">Repetir:</label>

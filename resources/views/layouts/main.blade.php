@@ -284,12 +284,6 @@
                       <p>Produtos</p>
                     </a>
                   </li>
-                  <li class="nav-item">
-                    <a href="{{env('APP_URL')}}/financeiro/cartao" class="nav-link">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>Cartões</p>
-                    </a>
-                  </li>
                 </ul>
               </li>
               <li class="nav-item">
