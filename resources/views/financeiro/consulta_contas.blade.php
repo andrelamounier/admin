@@ -178,7 +178,7 @@
                     <th>C. de custo</th>
                     <th>Forn. - Cliente</th>
                     <th>Produto</th>
-                    <?php if($tipo!='3'){ ?><th>Form. Pagamento</th><th>Status</th><?php } ?>
+                    <?php if($tipo!='3'){ ?><th>Status</th><?php } ?>
                     <th>Vencimento</th>
                     <th>Descrição</th>
                     <th>Ações</th>
@@ -206,7 +206,7 @@
                         <td data-value="{{$item->id_centro_custo}}" id="centro_custos_{{$item->id_lancamento}}">{{$item->centro_custos}}</td>
                         <td data-value="{{$item->id_for_cli}}" id="for_cli_{{$item->id_lancamento}}">{{$item->for_cli}}</td>
                         <td data-value="{{$item->id_produto}}"id="produto_{{$item->id_lancamento}}">{{$item->produto}}</td>
-                        <?php if($tipo!='3'){ ?><td>{{$item->nome == '' ? 'À vista' : $item->nome;}}</td><td data-value="{{$item->id_status}}" id="status_{{$item->id_lancamento}}">{{$item->status}}</td><?php } ?>
+                        <?php if($tipo!='3'){ ?><td data-value="{{$item->id_status}}" id="status_{{$item->id_lancamento}}">{{$item->status}}</td><?php } ?>
                         <td data-value="{{$item->data_vencimento}}" id="data_vencimento_{{$item->id_lancamento}}">{{date_format($date, 'd/m/Y')}}</td>
                         <td data-value="{{$item->descricao}}" id="descricao_{{$item->id_lancamento}}">{{$item->descricao}}</td>
                         <td>
@@ -220,7 +220,7 @@
                   <tr>
                     <th>Total</th>
                     <th>R$ {{number_format($total, 2, ',', '.')}}</th>
-                    <th colspan="<?php if($tipo!='3'){ echo '7';}else{echo '5';} ?>"></th>
+                    <th colspan="<?php if($tipo!='3'){ echo '6';}else{echo '5';} ?>"></th>
                   </tr>
                   </tfoot>
                 </table>
