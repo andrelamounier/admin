@@ -72,8 +72,8 @@
                         <div id="centro_custo" style="display: none;">
                             <div class="card-header">
                                 O <b>centro de custo</b> é uma maneira de separar seu sistema financeiro em vários setores, exemplo:<br>
-                                <b>Centro de custo: Concessionária de Energia</b>->Fornecedor: Cemig->Produto->Conta de luz<br>
-                                <b>Centro de custo: Marketing</b>->Fornecedor: Gráfica do Luiz->Produto->Panfleto<br>
+                                <b>Centro de custo: Concessionária de Energia</b> -> Fornecedor: Cemig -> Produto: Conta de luz<br>
+                                <b>Centro de custo: Marketing</b> -> Fornecedor: Gráfica do Luiz -> Produto: Panfleto<br>
                                 *Após o cadastro inicial, pode-se alterar e adicionar mais centro de custo.
                             </div>
                             <div class="card-body">
