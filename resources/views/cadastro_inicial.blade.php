@@ -49,11 +49,11 @@
                         <div id="saldo_inicial">
                             <div class="card-header">
                                 Saldo inicial
-                            </div>    
+                            </div>
                             <div class="card-body">
                                 <form name="saldo_inicial" enctype="multipart/form-data" >
                                     @csrf
-                  
+
                                     <div class="row">
                                         <div class="form-group col-md-12 col-lg-2">
                                           <label for="saldo">Saldo:</label>
@@ -72,14 +72,14 @@
                         <div id="centro_custo" style="display: none;">
                             <div class="card-header">
                                 O <b>centro de custo</b> é uma maneira de separar seu sistema financeiro em vários setores, exemplo:<br>
-                                <b>Centro de custo: Concessionária de Energia</b>->Fonecedor: Cemig->Produto->Conta de luz<br>
-                                <b>Centro de custo: Marketing</b>->Fonecedor: Grafica do Luiz->Produto->Planfeto<br>
+                                <b>Centro de custo: Concessionária de Energia</b>->Fornecedor: Cemig->Produto->Conta de luz<br>
+                                <b>Centro de custo: Marketing</b>->Fornecedor: Gráfica do Luiz->Produto->Panfleto<br>
                                 *Após o cadastro inicial, pode-se alterar e adicionar mais centro de custo.
-                            </div>    
+                            </div>
                             <div class="card-body">
                                 <form name="centro_custo" enctype="multipart/form-data" >
                                     @csrf
-                  
+
                                     <div class="row">
                                         <div class="form-group col-12">
                                             <label for="saldo">Centro de custo:</label>
@@ -155,11 +155,11 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                         </div>
-                    
+
                                     </div>
-                                
+
                                     <div class="modal-footer justify-content-between">
                                       <button type="button" onClick="pular(2)" class="btn btn-default">Pular</button>
                                       <button type="submit" class="btn btn-primary">Salvar</button>
@@ -167,16 +167,16 @@
                                 </form>
                             </div>
                         </div>
-                        
+
                         <div id="fornecedor_cliente" style="display: none;">
                             <div class="card-header">
                                 Fornecedores e Clientes
                                 *Após o cadastro inicial, pode-se alterar e adicionar mais fornecedores e clientes.
-                            </div>    
+                            </div>
                             <div class="card-body">
                                 <form name="fornecedor_cliente" enctype="multipart/form-data" >
                                     @csrf
-                  
+
                                     <div class="row">
                                         <div class="form-group col-12">
                                             <label for="saldo">Fornecedores e Clientes:</label>
@@ -247,11 +247,11 @@
                             <div class="card-header">
                                 Produtos
                                 *Após o cadastro inicial, pode-se alterar e adicionar mais fornecedores e clientes.
-                            </div>    
+                            </div>
                             <div class="card-body">
                                 <form name="produto" enctype="multipart/form-data" >
                                     @csrf
-                  
+
                                     <div class="row">
                                         <div class="form-group col-12">
                                             <label for="saldo">Produtos:</label>
@@ -346,13 +346,13 @@
 <script src="{{env('APP_URL')}}/plugins/chart.js/Chart.min.js"></script>
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://igorescobar.github.io/jQuery-Mask-Plugin/js/jquery.mask.min.js"></script>  
+<script src="https://igorescobar.github.io/jQuery-Mask-Plugin/js/jquery.mask.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
 <script>
     $('.dinheiro').mask('#.##0,00', {reverse: true});
-    
-    
-    
+
+
+
 $(function(){
   $('Form[name="saldo_inicial"]').submit(function(event){
     event.preventDefault();
@@ -365,7 +365,7 @@ $(function(){
     }
 
     if(verifica){
-        
+
       $.ajax({
         url:"{{env('APP_URL')}}/saldo_inicial",
         type: 'post',
@@ -399,10 +399,10 @@ $(function(){
               }
           }
       });
-    
+
   });
-}); 
-    
+});
+
 $(function(){
   $('Form[name="fornecedor_cliente"]').submit(function(event){
     event.preventDefault();
@@ -419,9 +419,9 @@ $(function(){
               }
           }
       });
-    
+
   });
-});   
+});
 $(function(){
   $('Form[name="produto"]').submit(function(event){
     event.preventDefault();
@@ -438,11 +438,11 @@ $(function(){
               }
           }
       });
-    
+
   });
-});   
-    
-    
+});
+
+
 function pular(x){
     switch(x){
       case 1:
@@ -474,11 +474,11 @@ function pular(x){
         break;
     }
 }
-    
-    
-    
-    
-    
+
+
+
+
+
 </script>
 
 
