@@ -12,6 +12,8 @@ use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\Forma_pagController;
 use App\Http\Controllers\NotificacaoController;
+use App\Http\Controllers\ContratoController;
+use App\Http\Controllers\MedicaoController;
 
 Route::view('/termos', 'terms');
 
@@ -21,19 +23,19 @@ Route::middleware([
     'verified',
     'notificacao'
 ])->group(function () {
-    
+
     Route::get('/dashboard', function () {
         return redirect('/');
     })->name('dashboard');
 
-    
+
     Route::post('/del_conta_usuario', [UserController::class,'del_conta_usuario']);
     Route::post('/buscacep', [UserController::class,'buscacep']);
     Route::get('/', [UserController::class,'index']);
     Route::get('/conta', [UserController::class,'conta']);
     Route::post('/altera_conta', [UserController::class,'altera_conta']);
     Route::post('/alterar_senha', [UserController::class,'alterar_senha']);
-    
+
     Route::get('/financeiro/contas_receber', [LancamentoController::class,'contas_receber']);
     Route::get('/financeiro/contas_pagar', [LancamentoController::class,'contas_pagar']);
     Route::get('financeiro/baixa_multipla', [LancamentoController::class,'baixa_multipla']);
@@ -47,7 +49,7 @@ Route::middleware([
     Route::match(['get', 'post'],'/financeiro/consulta_centro_custo', [LancamentoController::class,'consulta_centro_custo']);
     Route::match(['get', 'post'],'/financeiro/consulta_fluxo_caixa', [LancamentoController::class,'consulta_fluxo_caixa']);
 
-    
+
     Route::get('/financeiro/produto', [ProdutoController::class,'index']);
     Route::post('/add_produto', [ProdutoController::class,'add_produto']);
     Route::post('/buscar_Prod', [ProdutoController::class,'buscar_Prod']);
@@ -57,7 +59,7 @@ Route::middleware([
     Route::post('/add_custo', [Centro_custoController::class,'add_custo']);
     Route::post('/del_custo', [Centro_custoController::class,'del_custo']);
     Route::post('/buscar_cc', [Centro_custoController::class,'buscar_cc']);
-    
+
     Route::post('/saldo_inicial', [LancamentoController::class,'saldo_inicial']);
     Route::post('/centro_custo', [Centro_custoController::class,'centro_custo']);
     Route::post('/fornecedor_cliente', [Fonecedor_clienteController::class,'fornecedor_cliente']);
@@ -90,7 +92,17 @@ Route::middleware([
     Route::get('/fonecedor_cliente/perfil', [Fonecedor_clienteController::class,'perfil']);
     Route::get('/fonecedor_cliente', [Fonecedor_clienteController::class,'index']);
     Route::post('/add_for_cli', [Fonecedor_clienteController::class,'add_for_cli']);
-    
+
 
     Route::post('/notificacoes', [NotificacaoController::class,'notificacoes']);
+
+
+    Route::get('/contrato', [ContratoController::class,'contratos']);
+    Route::post('/busca_contrato', [ContratoController::class,'busca_contrato']);
+    Route::post('/add_contrato', [ContratoController::class,'add_contrato']);
+
+    Route::get('/medicao', [MedicaoController::class,'medicao']);
+    Route::get('/nova_medicao', [MedicaoController::class,'nova_medicao']);
+    Route::post('/salvar_medicao', [MedicaoController::class,'salvar_medicao']);
+    Route::post('/del_medicao', [MedicaoController::class,'del_medicao']);
 });

@@ -10,23 +10,23 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="{{env('APP_URL')}}/plugins/fontawesome-free/css/all.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  
+
   <!-- Outlined -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
- 
+
  <!-- Filled -->
  <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
-  
+
  <!-- Rounded -->
  <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Round" rel="stylesheet">
-  
+
  <!-- Sharp -->
  <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Sharp" rel="stylesheet">
-  
+
  <!-- Two tone -->
  <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Two+Tone" rel="stylesheet">
 
- 
+
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="{{env('APP_URL')}}/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
   <!-- Theme style -->
@@ -64,7 +64,7 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-      <!-- Navbar Search 
+      <!-- Navbar Search
       <li class="nav-item">
         <a class="nav-link" data-widget="navbar-search" href="#" role="button">
           <i class="fas fa-search"></i>
@@ -89,12 +89,12 @@
         <a class="nav-link" data-toggle="dropdown" href="#" onclick="notificacoes()" >
           <i class='far fa-bell alinhamento-icone'></i>
           <div id='icon-notifi'>
-          
+
           </div>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <span class="dropdown-item dropdown-header" id="texto-notifi">Notificações</span>
-          
+
           @php
             $totalAlerta=0;
             $lida=0;
@@ -163,11 +163,11 @@
                if($lida>0){
                 echo "<script>document.getElementById('icon-notifi').innerHTML = '<span class=\"badge badge-warning navbar-badge \">".$lida."</span>';</script>";
                }
-               
+
             }
           @endphp
           <div class="dropdown-divider"></div>
-          
+
         </div>
       </li>
       <li class="nav-item">
@@ -208,7 +208,7 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        
+
           <li class="nav-item">
             <a href="{{env('APP_URL')}}" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
@@ -346,6 +346,37 @@
               </li>
             </ul>
           </li>
+          @php
+                $user_id = auth()->user()->id;
+            @endphp
+
+            @if($user_id == 4)
+          <li class="nav-item">
+            <a href="#" class="nav-link" >
+            <i class="nav-icon fa-solid fa-file-signature"></i>
+              <p>
+              Contrato
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{env('APP_URL')}}/contrato" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Geral</p>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{{env('APP_URL')}}/medicao" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Medição</p>
+                  </a>
+                </li>
+            </ul>
+          </li>
+          @endif
           <li class="nav-item">
             <a href="#" class="nav-link" >
               <i class="nav-icon fa-solid fa-file"></i>
@@ -402,7 +433,7 @@
  @yield('content')
 
 
-  
+
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
     <!-- Control sidebar content goes here -->
@@ -472,7 +503,7 @@
             //}
           }
         }
-    }); 
+    });
 }
   </script>
 
@@ -549,7 +580,7 @@
                     <input type="text" id="nome_centro_custo" name="nome_centro_custo" class="form-control" >
                   </div>
                 </div>
-                
+
                 <div class="form-group col-2">
                   <label for="ativo_centro_custo">Ativo:</label>
                   <div class="input-group d-flex justify-content-center">
@@ -700,7 +731,7 @@
       </div>
       <!-- /.modal -->
 
-      
+
       <div class="modal fade" id="novo_produtos_modal">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
