@@ -65,6 +65,9 @@ class NotificacoesController extends Controller
                     $message->to($fornecedor->email)
                             ->subject('Aviso de Vencimento de Pagamento');
                 });
+
+                $notificacao->enviado = 1;
+                $notificacao->save();
             }
         }
 
