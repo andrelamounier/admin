@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('email:vencimento')->dailyAt('18:00');
+        $schedule->command('email:vencimento')->dailyAt('17:00');
     }
 
     /**
