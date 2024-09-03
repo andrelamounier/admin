@@ -16,10 +16,12 @@ class NotificacoesController extends Controller
             $dataAtual = Carbon::today();
 
             // Buscar notificações com data_envio igual à data atual
-            $notificacoes = Notificacao::whereDate('data_envio', $dataAtual)->get();
+            $notificacoes = Notificacao::whereDate('data_envio', $dataAtual)
+                           ->where('enviado', 0)
+                           ->get();
+
 
             foreach ($notificacoes as $notificacao) {
-                echo "teste";
                 // Buscar o lançamento associado
                 $lancamento = Lancamento::find($notificacao->id_lancamento);
 
