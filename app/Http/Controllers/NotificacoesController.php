@@ -19,6 +19,7 @@ class NotificacoesController extends Controller
             $notificacoes = Notificacao::whereDate('data_envio', $dataAtual)->get();
 
             foreach ($notificacoes as $notificacao) {
+                echo "teste";
                 // Buscar o lançamento associado
                 $lancamento = Lancamento::find($notificacao->id_lancamento);
 
