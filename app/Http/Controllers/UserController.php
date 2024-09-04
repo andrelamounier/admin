@@ -178,6 +178,7 @@ class UserController extends Controller
     }
 
     public function gerarCodigos(Request $request){
+        return response()->json(['success' => true]);
         // Valida o e-mail
         $request->validate([
             'email' => 'required|email|exists:users,email'
