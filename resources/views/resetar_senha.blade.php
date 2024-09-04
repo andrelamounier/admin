@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TiranossauroRex | Login</title>
+  <title>TiranossauroRex | Resertar senha</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -30,7 +30,7 @@
         {{ session('status') }}
     </div>
 @endif
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="">
             @csrf
         <div class="input-group mb-3">
           <x-jet-input id="email" class="form-control" placeholder="Email" type="email" name="email" :value="old('email')" required autofocus />
@@ -40,26 +40,15 @@
             </div>
           </div>
         </div>
-        <div class="input-group mb-3">
-        <x-jet-input id="password" class="form-control" placeholder="Senha" type="password" name="password" required autocomplete="Senha" />
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
-            </div>
-          </div>
-        </div>
         <div class="row">
+          <!-- /.col -->
           <div class="col-8">
             <div class="icheck-primary">
-              <input type="checkbox" id="remember_me" name="remember" >
-              <label for="remember_me">
-                Manter conectado
-              </label>
+
             </div>
           </div>
-          <!-- /.col -->
           <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+            <button type="submit" class="btn btn-primary btn-block">Enviar</button>
           </div>
           <!-- /.col -->
         </div>
@@ -67,7 +56,7 @@
 
 
       <p class="mb-1">
-        <a href="{{ route('reset_senha') }}">Esqueceu a senha?</a>
+        <a href="/">Logar</a>
       </p>
       <p class="mb-0">
         <a href="{{ route('register') }}" class="text-center">Criar conta</a>
@@ -84,5 +73,46 @@
 <script src="{{env('APP_URL')}}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="{{env('APP_URL')}}/dist/js/adminlte.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('form').on('submit', function(e){
+            e.preventDefault(); // Interrompe o envio padrão do formulário
+
+            let formData = {
+                _token: $('input[name="_token"]').val(),
+                email: $('input[name="email"]').val()
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('gerar_codigos') }}", // Defina a rota correta
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire(
+                            'Enviado!',
+                            'Os códigos de recuperação foram gerados e enviados para o seu e-mail.',
+                            'success'
+                        );
+                    } else {
+                        Swal.fire(
+                            'Erro!',
+                            'Não foi possível enviar o e-mail.',
+                            'error'
+                        );
+                    }
+                },
+                error: function() {
+                    Swal.fire(
+                        'Erro!',
+                        'Ocorreu um erro no envio.',
+                        'error'
+                    );
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

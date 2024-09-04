@@ -16,6 +16,11 @@ use App\Http\Controllers\ContratoController;
 use App\Http\Controllers\MedicaoController;
 
 Route::view('/termos', 'terms');
+Route::view('/resetar_senha', 'resetar_senha')->name('reset_senha');
+Route::post('/gerar_codigos', [UserController::class, 'gerarCodigos'])->name('gerar_codigos');
+Route::get('/gerar_codigos', [UserController::class, 'gerarCodigos'])->name('gerar_codigos');
+Route::get('/nova_senha', [UserController::class, 'showResetForm'])->name('password.reset');
+Route::post('/nova_senha', [UserController::class, 'resetPassword']);
 
 Route::middleware([
     'auth:sanctum',

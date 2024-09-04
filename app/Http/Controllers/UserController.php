@@ -13,6 +13,8 @@ use App\Models\Projeto;
 use App\Models\Fonecedor_cliente;
 use App\Models\Agenda;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendRecoveryCodes;
 
 class UserController extends Controller
 {
@@ -50,7 +52,7 @@ class UserController extends Controller
 
         return view('index',['tarefas' => $tarefas,'lancamentos_saldo_anterior' => $lancamentos_saldo_anterior,'agenda' => $agenda,'lancamentos' => $lancamentos,'lancamentos_semestral' => $lancamentos_semestral,'for_cli' => $for_cli]);
     }
- 
+
     public function finalizar_primeiro_acesso(Request $request){
         $user_id = auth()->user()->id;
         if($user_id){
@@ -58,7 +60,7 @@ class UserController extends Controller
                             SET primeiro_acesso = 1
                             WHERE id=$user_id ";
             $sql_primeiro_acesso = DB::select($sql_primeiro_acesso);
-            
+
             $status['status']=true;
         }else{
             $status['status']=false;
@@ -98,7 +100,7 @@ class UserController extends Controller
         $confimar_senha = $request->confimar_senha;
         $user_id = auth()->user()->id;
         if($senha_atual!='' || $nova_senha!='' || $confimar_senha!='' || $confimar_senha===$nova_senha || $user_id!=''){
-           
+
             $user = User::where('id', $user_id)->first();
 
             if ($user && Hash::check($senha_atual, $user->password)){
@@ -144,7 +146,7 @@ class UserController extends Controller
         echo json_encode($status);
 
     }
-    
+
     function del_conta_usuario(Request $request){
         $user_id = auth()->user()->id;
         $deletar_senha = $request->deletar_senha;
@@ -159,19 +161,72 @@ class UserController extends Controller
                         SET email = '$email'
                         WHERE id=$user_id ";
                 $sql = DB::select($sql);
-                
+
                 $status['status']=true;
             }else{
                 $status['status']=false;
                 $status['msg']='Senha errada, tente novamente.';
             }
 
-           
+
         }else{
             $status['status']=false;
             $status['msg']='Erro.';
-            
+
         }
         echo json_encode($status);
+    }
+
+    public function gerarCodigos(Request $request){
+        // Valida o e-mail
+        $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ]);
+
+        // Busca o usuário pelo e-mail
+        $user = User::where('email', $request->email)->first();
+
+        if ($user) {
+            // Gera os códigos de recuperação
+            $recoveryCodes = json_encode(array_map(function () {
+                return str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+            }, range(1, 8)));
+
+            // Atualiza os códigos de recuperação no usuário
+            $user->forceFill([
+                'two_factor_recovery_codes' => encrypt($recoveryCodes),
+            ])->save();
+
+            // Envia o e-mail para o usuário
+            Mail::to($user->email)->send(new SendRecoveryCodes($recoveryCodes));
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
+    public function showResetForm(Request $request){
+        $code = $request->query('code');
+        return view('auth.nova_senha', ['code' => $code]);
+    }
+
+    public function resetPassword(Request $request){
+        $request->validate([
+            'password' => 'required|confirmed|min:8',
+            'code' => 'required'
+        ]);
+
+        $user = User::where('recovery_code', $request->code)->first();
+
+        if (!$user) {
+            return redirect()->back()->withErrors(['code' => 'Código de recuperação inválido.']);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->recovery_code = null; // Limpar o código após a redefinição
+        $user->save();
+
+        return redirect('/login')->with('status', 'Senha redefinida com sucesso. Faça login com a nova senha.');
     }
 }

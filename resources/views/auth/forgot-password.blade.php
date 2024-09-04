@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="{{env('APP_URL')}}/dist/css/adminlte.min.css">
 </head>
 <body class="hold-transition login-page">
-  
+
 <div class="login-box">
   <div class="login-logo">
     <img class="animation__wobble" src="{{env('APP_URL')}}/img/favicon.png" alt="Logo" height="60" width="60">
@@ -51,7 +51,7 @@
           </div>
           <!-- /.col -->
           <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+            <button type="submit" class="btn btn-primary btn-block">Enviar</button>
           </div>
           <!-- /.col -->
         </div>
@@ -59,7 +59,7 @@
 
 
       <p class="mb-1">
-        <a href="{{ route('password.request') }}">Esqueceu a senha?</a>
+        <a href="{{ route('/') }}">Logar</a>
       </p>
       <p class="mb-0">
         <a href="{{ route('register') }}" class="text-center">Criar conta</a>
