@@ -14,6 +14,7 @@ use App\Http\Controllers\Forma_pagController;
 use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\ContratoController;
 use App\Http\Controllers\MedicaoController;
+use Illuminate\Support\Facades\Mail;
 
 Route::view('/termos', 'terms');
 Route::view('/resetar_senha', 'resetar_senha')->name('reset_senha');
