@@ -84,7 +84,12 @@
                         <input type="hidden" id="descricao_{{$item->id_contrato}}" value="{{$item->descricao}}">
                         <input type="hidden" id="centro_custo_{{$item->id_contrato}}" value="{{$item->id_centro_custo}}">
                         <td>
-                          <button type="button" onClick="editar({{$item->id_contrato}})" class="btn btn-primary"><i class="fa fa-pen"></i></button>
+                            <button type="button" onClick="editar({{$item->id_contrato}})" class="btn btn-primary">
+                                <i class="fa fa-pen"></i>
+                            </button>
+                            <button type="button" onClick="agenda({{$item->id_contrato}})" class="btn btn-secondary">
+                                <i class="fa fa-calendar"></i>
+                            </button>
                         </td>
                       </tr>
                     @endforeach
@@ -104,6 +109,152 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+  <div class="modal fade" id="agenda_modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Gerenciar Agenda do Cliente</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="gerenciar_agenda" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" id="id_contrato_agenda" name="id_contrato" class="form-control" >
+                    <div class="row">
+                        <!-- Seg -->
+                        <div class="col-6">
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="dias_semana[]" value="segunda" id="check_segunda">
+                                    <label class="form-check-label" for="check_segunda">Segunda-feira</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="hora_inicio_segunda">Hora</label>
+                                        <input type="time" id="hora_inicio_segunda" name="hora_inicio_segunda" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ter -->
+                        <div class="col-6">
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="dias_semana[]" value="terca" id="check_terca">
+                                    <label class="form-check-label" for="check_terca">Terça-feira</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="hora_inicio_terca">Hora</label>
+                                        <input type="time" id="hora_inicio_terca" name="hora_inicio_terca" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Qua -->
+                        <div class="col-6">
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="dias_semana[]" value="quarta" id="check_quarta">
+                                    <label class="form-check-label" for="check_quarta">Quarta-feira</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="hora_inicio_quarta">Hora</label>
+                                        <input type="time" id="hora_inicio_quarta" name="hora_inicio_quarta" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Qui -->
+                        <div class="col-6">
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="dias_semana[]" value="quinta" id="check_quinta">
+                                    <label class="form-check-label" for="check_quinta">Quinta-feira</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="hora_inicio_quinta">Hora</label>
+                                        <input type="time" id="hora_inicio_quinta" name="hora_inicio_quinta" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sex -->
+                        <div class="col-6">
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="dias_semana[]" value="sexta" id="check_sexta">
+                                    <label class="form-check-label" for="check_sexta">Sexta-feira</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="hora_inicio_sexta">Hora</label>
+                                        <input type="time" id="hora_inicio_sexta" name="hora_inicio_sexta" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sab -->
+                        <div class="col-6">
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="dias_semana[]" value="sabado" id="check_sabado">
+                                    <label class="form-check-label" for="check_sabado">Sábado</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="hora_inicio_sabado">Hora</label>
+                                        <input type="time" id="hora_inicio_sabado" name="hora_inicio_sabado" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dom -->
+                        <div class="col-6">
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="dias_semana[]" value="domingo" id="check_domingo">
+                                    <label class="form-check-label" for="check_domingo">Domingo</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="hora_inicio_domingo">Hora</label>
+                                        <input type="time" id="hora_inicio_domingo" name="hora_inicio_domingo" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="exibir_agenda" name="exibir_agenda" value="1">
+                                <label class="form-check-label" for="exibir_agenda">Exibir na agenda</label>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" onclick="gerarAgendaJson()">Salvar</button>
+            </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
 
 
   <div class="modal fade" id="novo_contrato_modal">
@@ -266,7 +417,6 @@ $('.dinheiro').mask('#.##0,00', {reverse: true});
 
 
 function novo_contrato_modal(){
-console.log(1)
   document.getElementById("id_contrato").value='';
   document.getElementById("numero_contrato").value='';
   document.getElementById("for_cli_contrato").value='';
@@ -510,6 +660,99 @@ $(function(){
     }
   });
 });
+
+function agenda(id) {
+    document.getElementById("id_contrato_agenda").value = id;
+
+    // Limpar os campos do modal (checkboxes e horários)
+    $('#agenda_modal input[type="checkbox"]').prop('checked', false);
+    $('#agenda_modal input[type="time"]').val('');
+
+    // Realizar a requisição AJAX para buscar os dados da agenda
+    $.ajax({
+        url: "{{env('APP_URL')}}/get_agenda_contrato",
+        type: 'GET',
+        data: {
+            'id_contrato': id
+        },
+        success: function(response) {
+            if (response.success) {
+                // Preencher os campos do modal com os dados do JSON da agenda
+                var agenda = response.agenda;
+                // Iterar sobre os dias da semana
+                for (var dia in agenda.dias_semana) {
+                    // Verificar se o dia existe no JSON
+                    if (agenda.dias_semana.hasOwnProperty(dia)) {
+                        //console.log(dia)
+
+
+                        // Marcar o checkbox correspondente ao dia da semana
+                        $('#agenda_modal input[id="check_' + dia + '"]').prop('checked', true);
+
+                        // Preencher os campos de horário
+                        $('#agenda_modal input[name="hora_inicio_' + dia + '"]').val(agenda.dias_semana[dia].hora_inicio);
+                    }
+                }
+                $('#agenda_modal input[id="exibir_agenda"]').prop('checked', agenda.exibir_agenda);
+            }
+        },
+        error: function(xhr) {
+            console.error("Erro ao buscar a agenda:", xhr.responseText);
+        }
+    });
+
+    // Abrir o modal
+    $("#agenda_modal").modal();
+}
+
+
+function gerarAgendaJson() {
+    const form = document.forms['gerenciar_agenda'];
+
+    let agenda = {};
+
+    // Pega o status do checkbox "Exibir na agenda"
+    agenda.exibir_agenda = form['exibir_agenda'].checked ? 1 : 0;
+
+    // Inicializa o objeto para os dias da semana
+    agenda.dias_semana = {};
+
+    // Dias da semana com horário individual
+    const dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+
+    dias.forEach(dia => {
+        const checkDia = form.querySelector(`input[name="dias_semana[]"][value="${dia}"]`);
+
+        // Se o dia estiver marcado
+        if (checkDia && checkDia.checked) {
+            agenda.dias_semana[dia] = {
+                hora_inicio: form[`hora_inicio_${dia}`].value
+            };
+        }
+    });
+
+    // Gera o JSON com os dados capturados
+    const agendaJson = JSON.stringify(agenda);
+
+    var id_contrato = document.getElementById("id_contrato_agenda").value;
+    $.ajax({
+        url:"{{env('APP_URL')}}/agenda_contrato",
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: 'post',
+        dataType: 'json',
+        data: { 'agenda' : agendaJson,
+                'id_contrato' :id_contrato
+            },
+        success: function(response){
+              if(response.status){
+                alert(response.message);
+              }else{
+                alert(response.message);
+              }
+          }
+      });
+}
+
 </script>
 @endsection
 

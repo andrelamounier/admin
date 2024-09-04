@@ -100,6 +100,8 @@ Route::middleware([
     Route::get('/contrato', [ContratoController::class,'contratos']);
     Route::post('/busca_contrato', [ContratoController::class,'busca_contrato']);
     Route::post('/add_contrato', [ContratoController::class,'add_contrato']);
+    Route::post('/agenda_contrato', [ContratoController::class,'agenda_contrato']);
+    Route::get('/get_agenda_contrato', [ContratoController::class,'get_agenda_contrato']);
 
     Route::get('/medicao', [MedicaoController::class,'medicao']);
     Route::get('/nova_medicao', [MedicaoController::class,'nova_medicao']);

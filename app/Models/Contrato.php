@@ -25,6 +25,7 @@ class Contrato extends Model
         'valor',
         'status',
         'descricao',
+        'agenda',
         'id_centro_custo'
     ];
 

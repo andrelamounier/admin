@@ -6,6 +6,7 @@ use App\Models\Centro_custo;
 use App\Models\Contrato;
 use App\Models\Fonecedor_cliente;
 use App\Models\Produto;
+use App\Models\Agenda;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -114,6 +115,133 @@ class ContratoController extends Controller
             ]);
         }
 
+        public function agenda_contrato(Request $request){
+            // Verifique se o usuário está autenticado
+            $user_id = auth()->user()->id;
+            if (!$user_id) {
+                return response()->json(['status' => false, 'message' => 'Usuário não autenticado.']);
+            }
+
+            // Validação dos dados recebidos
+            $validatedData = $request->validate([
+                'agenda' => 'required',  // Certifique-se de que 'agenda' seja um array
+                'id_contrato' => 'required|integer|exists:contratos,id_contrato', // Verifique se o contrato existe
+            ]);
+
+            $id_contrato = $validatedData['id_contrato'];
+            $agenda = json_decode($validatedData['agenda'], true);
+
+            // Atualize o campo agenda na tabela contratos
+            $contrato = Contrato::find($id_contrato);
+            if (!$contrato) {
+                return response()->json(['status' => false, 'message' => 'Contrato não encontrado.']);
+            }
+
+            $contrato->agenda = $validatedData['agenda'];
+            $contrato->save();
+
+            // Apagar registros antigos na tabela agendas
+            Agenda::where('contrato', 1)
+                ->where('id_usuario', $user_id)
+                ->whereDate('data', '>=', now()->startOfDay())
+                ->delete();
+
+            // Definir cor e título padrão
+            $cor = '#800080'; // Roxo em hexadecimal
+
+            // Obter o nome do cliente e do produto
+            $fornecedorCliente = Fonecedor_cliente::where('id_for_cli', $contrato->id_for_cli)
+                                                    ->where('id_usuario', $user_id)
+                                                    ->first();
+            $nome_cliente = $fornecedorCliente ? $fornecedorCliente->nome : 'Cliente Desconhecido';
+
+            // Buscar produto pelo id_produto e id_usuario do contrato
+            $produto = Produto::where('id_produto', $contrato->id_produto)
+                                ->where('id_usuario', $user_id)
+                                ->first();
+            $nome_produto = $produto ? $produto->nome : 'Produto Desconhecido';
+
+            // Gerar título
+            $titulo = $nome_cliente . ' - ' . $nome_produto;
+            // Criar eventos na tabela agendas
+            $dias_da_semana = [
+                'domingo' => '0',
+                'segunda' => '1',
+                'terca' => '2',
+                'quarta' => '3',
+                'quinta' => '4',
+                'sexta' => '5',
+                'sabado' => '6'
+            ];
+            if(isset($agenda['exibir_agenda']) && $agenda['exibir_agenda']) {
+                foreach ($agenda['dias_semana'] as $dia => $aux ) {
+
+                    $hora_inicio = $aux['hora_inicio'] ?? '00:00';
+                    // Calcular o intervalo de datas
+                    $hoje = now()->startOfDay(); // Dia de hoje
+                    $fim_mes_atual = $hoje->copy()->endOfMonth(); // Último dia do mês atual
+
+                    $inicio_mes_proximo = $fim_mes_atual->copy()->addDay(); // Primeiro dia do próximo mês
+                    $fim_mes_proximo = $inicio_mes_proximo->copy()->endOfMonth(); // Último dia do próximo mês
+                    // Gerar eventos para o mês atual
+                    $this->criarEventos($user_id, $contrato->id_for_cli, $titulo, $dias_da_semana[$dia], $hora_inicio, $hoje, $fim_mes_atual);
+                    // Gerar eventos para o próximo mês
+                    $this->criarEventos($user_id, $contrato->id_for_cli, $titulo, $dias_da_semana[$dia], $hora_inicio, $inicio_mes_proximo, $fim_mes_proximo);
+                }
+            }
+
+            return response()->json(['status' => true, 'message' => 'Agenda atualizada com sucesso.']);
+        }
+
+        private function criarEventos($user_id, $id_for_cli, $titulo, $dia_da_semana, $hora_inicio, $inicio, $fim)
+        {
+
+            $currentDate = $inicio->copy();
+            while ($currentDate <= $fim) {
+
+                if ($currentDate->dayOfWeek == $dia_da_semana) {
+                    Agenda::create([
+                        'id_usuario' => $user_id,
+                        'id_for_cli' => $id_for_cli,
+                        'titulo' => $titulo,
+                        'cor' => '#800080',
+                        'contrato' => 1,
+                        'data' => $currentDate->format('Y-m-d') . ' ' . $hora_inicio,
+                    ]);
+                }
+                $currentDate->addDay();
+            }
+        }
 
 
+
+        public function get_agenda_contrato(Request $request){
+            $id_contrato = $request->id_contrato;
+            $contrato = Contrato::find($id_contrato);
+
+            if (!$contrato) {
+                return response()->json(['success' => false, 'message' => 'Contrato não encontrado.']);
+            }
+            if($contrato->agenda!='' || $contrato->agenda!=null){
+                return response()->json([
+                    'success' => true,
+                    'agenda' => json_decode($contrato->agenda)  // Retornando o JSON da agenda
+                ]);
+            }else{
+                return response()->json([
+                    'success' => false,
+                    'agenda' => ''
+                ]);
+            }
+
+        }
+        public function fornecedorCliente()
+        {
+            return $this->belongsTo(Fonecedor_cliente::class, 'id_for_cli');
+        }
+
+        public function produto()
+        {
+            return $this->belongsTo(Produto::class, 'id_produto');
+        }
 }

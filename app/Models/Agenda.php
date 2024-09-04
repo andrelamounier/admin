@@ -11,6 +11,6 @@ class Agenda extends Model
     protected $table = 'agendas';
 
     protected $fillable = [
-        'id','id_usuario', 'id_for_cli', 'titulo', 'created_at', 'data', 'descricao', 'cor','updated_at'
+        'id','id_usuario', 'id_for_cli', 'titulo', 'created_at', 'data', 'descricao', 'cor','updated_at','contrato'
     ];
 }
