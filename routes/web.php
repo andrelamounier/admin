@@ -23,6 +23,15 @@ Route::post('/admin/gerar_codigos', [UserController::class, 'gerarCodigos']);
 Route::get('/nova_senha', [UserController::class, 'showResetForm'])->name('password.reset');
 Route::post('/nova_senha', [UserController::class, 'resetPassword']);
 
+Route::get('/test-email', function () {
+    Mail::raw('Teste de envio de e-mail', function ($message) {
+        $message->to('0k0n4n@gmail.com')
+                ->subject('Teste de E-mail');
+    });
+
+    return 'E-mail de teste enviado!';
+});
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
