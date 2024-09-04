@@ -178,7 +178,6 @@ class UserController extends Controller
     }
 
     public function gerarCodigos(Request $request){
-        return response()->json(['success' => true]);
         // Valida o e-mail
         $request->validate([
             'email' => 'required|email|exists:users,email'
@@ -189,17 +188,15 @@ class UserController extends Controller
 
         if ($user) {
             // Gera os códigos de recuperação
-            $recoveryCodes = json_encode(array_map(function () {
-                return str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-            }, range(1, 8)));
+            $recoveryCodes =str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
             // Atualiza os códigos de recuperação no usuário
             $user->forceFill([
-                'two_factor_recovery_codes' => encrypt($recoveryCodes),
+                'two_factor_recovery_codes' => $recoveryCodes,
             ])->save();
-
+            $code = $recoveryCodes;
             // Envia o e-mail para o usuário
-            Mail::to($user->email)->send(new SendRecoveryCodes($recoveryCodes));
+            Mail::to($user->email)->send(new SendRecoveryCodes($code));
 
             return response()->json(['success' => true]);
         }

@@ -19,7 +19,7 @@ class SendRecoveryCodes extends Mailable
 
     public function build()
     {
-        return $this->view('emails.recovery_codes')
+        return $this->view('emails.recovery_codes',['code'=>$this->codes])
                     ->subject('Recuperação de Senha');
     }
 }
