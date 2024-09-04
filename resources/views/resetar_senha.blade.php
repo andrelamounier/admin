@@ -76,16 +76,16 @@
 <script>
     $(document).ready(function(){
         $('form').on('submit', function(e){
-            e.preventDefault(); // Interrompe o envio padrão do formulário
+            e.preventDefault();
 
             let formData = {
-                _token: $('input[name="_token"]').val(),
                 email: $('input[name="email"]').val()
             };
 
             $.ajax({
                 type: "POST",
-                url: "{{ route('gerar_codigos') }}", // Defina a rota correta
+                url: "{{ route('gerar_codigos') }}",
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 data: formData,
                 success: function(response) {
                     if (response.success) {
