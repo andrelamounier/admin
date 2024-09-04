@@ -346,11 +346,6 @@
               </li>
             </ul>
           </li>
-          @php
-                $user_id = auth()->user()->id;
-            @endphp
-
-            @if($user_id == 4)
           <li class="nav-item">
             <a href="#" class="nav-link" >
             <i class="nav-icon fa-solid fa-file-signature"></i>
@@ -376,7 +371,6 @@
                 </li>
             </ul>
           </li>
-          @endif
           <li class="nav-item">
             <a href="#" class="nav-link" >
               <i class="nav-icon fa-solid fa-file"></i>
