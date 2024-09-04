@@ -56,7 +56,7 @@
 
 
       <p class="mb-1">
-        <a href="/">Logar</a>
+        <a href="/admin">Logar</a>
       </p>
       <p class="mb-0">
         <a href="{{ route('register') }}" class="text-center">Criar conta</a>
