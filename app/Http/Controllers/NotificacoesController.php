@@ -22,53 +22,16 @@ class NotificacoesController extends Controller
 
 
             foreach ($notificacoes as $notificacao) {
-                // Buscar o lançamento associado
-                $lancamento = Lancamento::find($notificacao->id_lancamento);
-
-                if (!$lancamento) {
-                    continue; // Se o lançamento não existir, ignore
-                }
-
-                // Buscar o fornecedor
-                $fornecedor = Fonecedor_cliente::find($lancamento->id_for_cli);
-
-                if (!$fornecedor) {
-                    continue; // Se o fornecedor não existir, ignore
-                }
-
-                $produto = Produto::find($lancamento->id_produto);
-
-                if (!$produto) {
-                    $nomeProduto = '';
-                } else {
-                    $nomeProduto = $produto->nome;
-                }
-
-                $user = User::find($lancamento->id_usuario);
-                $nomeUsuario = $user->name;
-
-                // Gerar a mensagem
-                $dataPagamento = Carbon::parse($lancamento->data_pagamento);
-                $mensagem = "Bom dia,\n\n";
-
-                if ($dataPagamento->isToday()) {
-                    $mensagem .= "Gostaríamos de lembrá-lo que hoje é a data de vencimento para o pagamento de \"$nomeProduto\".\n\n";
-                } elseif ($dataPagamento->isPast()) {
-                    $mensagem .= "Atenção! A data de vencimento para o pagamento da \"$nomeProduto\" já passou.\n\n";
-                } else {
-                    $mensagem .= "Estamos enviando este lembrete para o próximo vencimento do pagamento da \"$nomeProduto\".\n\n";
-                }
-
-                $mensagem .= "Data de Vencimento: " . $dataPagamento->format('d/m/Y') . "\n\n";
-                $mensagem .= "Por favor, desconsidere este e-mail caso já tenha efetuado o pagamento. Não responda a este e-mail.\n\n";
-                $mensagem .= "Atenciosamente,\n$nomeUsuario";
-
+                $assunto = $notificacao->assunto;
+                $de = $notificacao->de;
+                $para = $notificacao->para;
+                $mensagem = $notificacao->mensagem;
                 // Enviar o e-mail
-                Mail::raw($mensagem, function($message) use ($fornecedor) {
-                    $message->to($fornecedor->email)
-                            ->subject('Aviso de Vencimento de Pagamento');
+                Mail::raw($mensagem, function($message) use ($de, $para, $assunto) {
+                    $message->from($de)
+                            ->to($para)
+                            ->subject($assunto);
                 });
-
                 $notificacao->enviado = 1;
                 $notificacao->save();
             }

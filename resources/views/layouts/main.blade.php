@@ -402,7 +402,7 @@
           </li>
           <li class="nav-item">
             <a href="#" class="nav-link" >
-            <span class="nav-icon  material-icons-outlined">view_kanban</span>
+            <i class="material-icons">view_kanban</i>
               <p>
                 Projetos
                 <i class="right fas fa-angle-left"></i>
@@ -413,6 +413,23 @@
                 <a href="{{env('APP_URL')}}/projetos/tarefas" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
                       <p>Tarefas</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" >
+            <i class="far fa-bell"></i>
+              <p>
+                Notificações
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{env('APP_URL')}}/notificacoes_emails" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Emails</p>
                 </a>
               </li>
             </ul>

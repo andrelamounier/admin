@@ -19,6 +19,10 @@ class Notificacao extends Model
         'data_envio',
         'id_lancamento',
         'data_inicio',
+        'de',
+        'para',
+        'assunto',
+        'mensagem',
         'data_fim'
     ];
 

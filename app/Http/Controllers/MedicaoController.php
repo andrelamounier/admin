@@ -128,9 +128,9 @@ class MedicaoController extends Controller
 
                 if($medicao['notificacao']>0){
                     $data_vencimento = new DateTime($medicao['data_vencimento']);
-                    $notificacao = $medicao['notificacao'];
+                    $notificacao_aux = $medicao['notificacao'];
 
-                    switch ($notificacao) {
+                    switch ($notificacao_aux) {
                         case 0:
                             $data_notificacao = null;
                             break;
@@ -156,12 +156,46 @@ class MedicaoController extends Controller
                             $data_notificacao = null;
                             break;
                     }
-                    $notificacao = new Notificacao();
-                    $notificacao->id_usuario = $user_id;
-                    $notificacao->tipo = '1';
-                    $notificacao->id_lancamento = $lancamento->id_lancamento;
-                    $notificacao->data_envio = $data_notificacao;
-                    $notificacao->save();
+                    $fornecedor = Fonecedor_cliente::find($lancamento->id_for_cli);
+                    if (!empty($fornecedor->email) || filter_var($fornecedor->email, FILTER_VALIDATE_EMAIL)) {
+                        $produto = Produto::find($lancamento->id_produto);
+
+                        if (!$produto) {
+                            $nomeProduto = '';
+                        } else {
+                            $nomeProduto = $produto->nome;
+                        }
+
+                        $nomeUsuario = auth()->user()->name;
+
+                        // Gerar a mensagem
+                        $dataPagamento = Carbon::parse($lancamento->data_pagamento);
+                        $dataNotificacao = Carbon::parse($data_notificacao);
+                        $mensagem = "Bom dia,\n\n";
+
+                        if ($dataPagamento->equalTo($dataNotificacao)) {
+                            $mensagem .= "Gostaríamos de lembrá-lo que hoje é a data de vencimento para o pagamento de \"$nomeProduto\".\n\n";
+                        } elseif ($dataPagamento->lessThan($dataNotificacao)) {
+                            $mensagem .= "Atenção! A data de vencimento para o pagamento de \"$nomeProduto\" já passou.\n\n";
+                        } else {
+                            $mensagem .= "Estamos enviando este lembrete para o próximo vencimento do pagamento de \"$nomeProduto\".\n\n";
+                        }
+
+
+                        $mensagem .= "Data de Vencimento: " . $dataPagamento->format('d/m/Y') . "\n\n";
+                        $mensagem .= "Por favor, desconsidere este e-mail caso já tenha efetuado o pagamento. Não responda a este e-mail.\n\n";
+                        $mensagem .= "Atenciosamente,\n$nomeUsuario";
+                        $notificacao = new Notificacao();
+                        $notificacao->id_usuario = $user_id;
+                        $notificacao->tipo = '1';
+                        $notificacao->id_lancamento = $lancamento->id_lancamento;
+                        $notificacao->data_envio = $data_notificacao;
+                        $notificacao->de = env('MAIL_USERNAME');
+                        $notificacao->para = $fornecedor->email;
+                        $notificacao->assunto = 'Aviso de Vencimento de Pagamento';
+                        $notificacao->mensagem = $mensagem;
+                        $notificacao->save();
+                    }
                 }
 
 

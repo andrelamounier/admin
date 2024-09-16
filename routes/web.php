@@ -111,6 +111,8 @@ Route::middleware([
 
 
     Route::post('/notificacoes', [NotificacaoController::class,'notificacoes']);
+    Route::get('/notificacoes_emails', [NotificacaoController::class,'emails']);
+    Route::get('/getmensagem/{id}', [NotificacaoController::class, 'getMensagem']);
 
 
     Route::get('/contrato', [ContratoController::class,'contratos']);
@@ -123,4 +125,11 @@ Route::middleware([
     Route::get('/nova_medicao', [MedicaoController::class,'nova_medicao']);
     Route::post('/salvar_medicao', [MedicaoController::class,'salvar_medicao']);
     Route::post('/del_medicao', [MedicaoController::class,'del_medicao']);
+
+
+
+
+
+
+
 });
