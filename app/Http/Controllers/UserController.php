@@ -215,14 +215,14 @@ class UserController extends Controller
             'code' => 'required'
         ]);
 
-        $user = User::where('recovery_code', $request->code)->first();
+        $user = User::where('two_factor_recovery_codes', $request->code)->first();
 
         if (!$user) {
             return redirect()->back()->withErrors(['code' => 'Código de recuperação inválido.']);
         }
 
         $user->password = Hash::make($request->password);
-        $user->recovery_code = null; // Limpar o código após a redefinição
+        $user->two_factor_recovery_codes = null; // Limpar o código após a redefinição
         $user->save();
 
         return redirect('/login')->with('status', 'Senha redefinida com sucesso. Faça login com a nova senha.');
