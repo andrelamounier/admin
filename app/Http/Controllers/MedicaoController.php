@@ -174,17 +174,17 @@ class MedicaoController extends Controller
                         $mensagem = "Bom dia,\n\n";
 
                         if ($dataPagamento->equalTo($dataNotificacao)) {
-                            $mensagem .= "Gostaríamos de lembrá-lo que hoje é a data de vencimento para o pagamento de \"$nomeProduto\".\n\n";
+                            $mensagem .= "<p>Gostaríamos de lembrá-lo que hoje é a data de vencimento para o pagamento de <strong>$nomeProduto</strong>.</p>";
                         } elseif ($dataPagamento->lessThan($dataNotificacao)) {
-                            $mensagem .= "Atenção! A data de vencimento para o pagamento de \"$nomeProduto\" já passou.\n\n";
+                            $mensagem .= "<p>Atenção! A data de vencimento para o pagamento de <strong>$nomeProduto</strong> já passou.</p>";
                         } else {
-                            $mensagem .= "Estamos enviando este lembrete para o próximo vencimento do pagamento de \"$nomeProduto\".\n\n";
+                            $mensagem .= "<p>Estamos enviando este lembrete para o próximo vencimento do pagamento de <strong>$nomeProduto</strong>.</p>";
                         }
 
+                        $mensagem .= "<p>Data de Vencimento: <strong>" . $dataPagamento->format('d/m/Y') . "</strong></p>";
+                        $mensagem .= "<p>Por favor, desconsidere este e-mail caso já tenha efetuado o pagamento. Não responda a este e-mail.</p>";
+                        $mensagem .= "<p>Atenciosamente,<br>$nomeUsuario</p>";
 
-                        $mensagem .= "Data de Vencimento: " . $dataPagamento->format('d/m/Y') . "\n\n";
-                        $mensagem .= "Por favor, desconsidere este e-mail caso já tenha efetuado o pagamento. Não responda a este e-mail.\n\n";
-                        $mensagem .= "Atenciosamente,\n$nomeUsuario";
                         $notificacao = new Notificacao();
                         $notificacao->id_usuario = $user_id;
                         $notificacao->tipo = '1';

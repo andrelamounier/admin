@@ -6,6 +6,8 @@ use App\Models\Alerta;
 use App\Models\Notificacao;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NotificacaoController extends Controller
 {
@@ -54,6 +56,63 @@ class NotificacaoController extends Controller
             }
         }
 
+        public function del_email(Request $request){
+            $userId = auth()->id();
 
+            $notificacao = Notificacao::where('id_notificacao', $request->id_notificacao)
+                ->where('id_usuario', $userId)
+                ->first();
+
+            if ($notificacao){
+                $notificacao->delete();
+                $status['status']=true;
+            }else{
+                $status['status']=false;
+            }
+            echo json_encode($status);
+        }
+
+
+        public function edit_email($id){
+            if (!Auth::check()) {
+                return redirect('/');
+            }
+            $userId = auth()->id();
+
+            $email = Notificacao::where('id_notificacao', $id)
+                ->where('id_usuario', $userId)
+                ->first();
+
+            if ($email) {
+                return view('editar_email', ['email' => $email]);
+            } else {
+                return redirect('/notificacoes')
+                    ->with('error', 'Email não encontrada.');
+            }
+        }
+
+        public function editar_email(Request $request){
+            if (!Auth::check()) {
+                return redirect('/');
+            }
+            $userId = auth()->id();
+            $id = $request->id;
+            $email = Notificacao::where('id_notificacao', $id)
+                ->where('id_usuario', $userId)
+                ->first();
+
+            if($email){
+                $email->data_envio = $request->data;
+                $email->enviado = $request->status;
+                $email->para = $request->para;
+                $email->assunto = $request->assunto;
+                $email->mensagem = $request->texto;
+                $email->save();
+                return redirect('/notificacoes');
+            }else{
+                return redirect('/notificacoes')
+                    ->with('error', 'Erro ao editar.');
+            }
+        }
 
 }

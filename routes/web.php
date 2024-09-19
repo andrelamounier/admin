@@ -110,16 +110,20 @@ Route::middleware([
     Route::post('/add_for_cli', [Fonecedor_clienteController::class,'add_for_cli']);
 
 
-    Route::post('/notificacoes', [NotificacaoController::class,'notificacoes']);
+    Route::match(['get', 'post'],'/notificacoes', [NotificacaoController::class,'notificacoes']);
     Route::get('/notificacoes_emails', [NotificacaoController::class,'emails']);
     Route::get('/getmensagem/{id}', [NotificacaoController::class, 'getMensagem']);
-
+    Route::post('/del_email', [NotificacaoController::class,'del_email']);
+    Route::get('/edit_email/{id}', [NotificacaoController::class, 'edit_email']);
+    Route::post('/editar_email', [NotificacaoController::class,'editar_email']);
 
     Route::get('/contrato', [ContratoController::class,'contratos']);
     Route::post('/busca_contrato', [ContratoController::class,'busca_contrato']);
     Route::post('/add_contrato', [ContratoController::class,'add_contrato']);
     Route::post('/agenda_contrato', [ContratoController::class,'agenda_contrato']);
     Route::get('/get_agenda_contrato', [ContratoController::class,'get_agenda_contrato']);
+
+
 
     Route::get('/medicao', [MedicaoController::class,'medicao']);
     Route::get('/nova_medicao', [MedicaoController::class,'nova_medicao']);

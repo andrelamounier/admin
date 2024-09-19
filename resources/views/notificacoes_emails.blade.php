@@ -8,6 +8,7 @@
 @endsection
 
 @section('content')
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -54,9 +55,19 @@
                                 <a href="#" onclick="showMessage({{ $email->id_notificacao}})">Ver mais</a>
                             </td>
                             <td>{{ \Carbon\Carbon::parse($email->data_envio)->format('d/m/Y') }}</td>
-                            <td>{{ $email->enviado ? 'Enviado' : 'Não enviado' }}</td>
-
-                            <td></td>
+                            <td>
+                                @if($email->enviado == 0)
+                                    Não enviado
+                                @elseif($email->enviado == 1)
+                                    Enviado
+                                @elseif($email->enviado == 2)
+                                    Cancelado
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{env('APP_URL')}}/edit_email/{{$email->id_notificacao}}"><button type="button" class="btn btn-primary"><i class="fa fa-pen"></i></button></a>
+                                <button type="button" onClick="deletar({{$email->id_notificacao}})" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                            </td>
                         </tr>
                     @endforeach
 
@@ -96,18 +107,30 @@
     </div>
 </div>
 
+
+
+
+
 @endsection
 
 @section('scripts')
 @include('auxiliares.funcoesTabela');
 <script>
+
+    function decodeHtml(html) {
+        var txt = document.createElement('textarea');
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
     function showMessage(id) {
         $.ajax({
             url: "{{env('APP_URL')}}/getmensagem/" + id,
             method: 'GET',
             success: function(response) {
-                document.getElementById('messageContent').innerHTML = response.mensagem;
-                console.log(response.mensagem);
+                const cleanMessage = response.mensagem.replace(/<br\s*\/?>/gi, '');
+                const decodedMessage = decodeHtml(cleanMessage);
+                document.getElementById('messageContent').innerHTML = decodedMessage;
                 $('#messageModal').modal('show');
             },
             error: function() {
@@ -115,6 +138,35 @@
             }
         });
     }
+
+    function deletar(id){
+        Swal.fire({
+        title: 'Deseja realmente deletar esse email?',
+        showDenyButton: true,
+        denyButtonText: `Deletar`,
+        confirmButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+            } else if (result.isDenied) {
+            $.ajax({
+                url:"{{env('APP_URL')}}/del_email",
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                type: 'post',
+                data: {'id_notificacao' : id},
+                dataType: 'json',
+                success: function(response){
+                    if(response.status){
+                        document.location.reload(true);
+                    }else{
+                        alert(response.message);
+                    }
+                }
+            });
+            }
+        });
+    }
+
 </script>
 @endsection
 
