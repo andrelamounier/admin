@@ -129,7 +129,7 @@ var userId = {{ auth()->user()->id }};
 Dropzone.options.documentosupload = {
     paramName: "file", // O nome do parâmetro para transferência do arquivo
     maxFilesize: userId === 4 ? 200 : 10, // 200MB para ID 4, 10MB para os demais
-    acceptedFiles: 'image/*,.pdf,.doc,.docx,.slt,.rar,.7zip,.zip',
+    acceptedFiles: 'image/*,.pdf,.doc,.docx,.stl,.rar,.7zip,.zip',
     success: function (file, response) {
         if (response.status === 'erro') {
             $(document).Toasts('create', {

@@ -129,7 +129,7 @@ var userId = {{ auth()->user()->id }};
 Dropzone.options.documentosupload = {
     paramName: "file",
     maxFilesize: userId === 4 ? 200 : 10,
-    acceptedFiles: 'image/*,.pdf,.doc,.docx,.slt,.rar,.7zip,.zip',
+    acceptedFiles: 'image/*,.pdf,.doc,.docx,.stl,.rar,.7zip,.zip',
     init: function () {
         this.on("sending", function (file, xhr, formData) {
             formData.append("tipo", 'galeria');
