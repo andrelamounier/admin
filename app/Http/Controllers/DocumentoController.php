@@ -7,14 +7,17 @@ use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Fonecedor_cliente;
+use App\Models\Galeria;
+use App\Models\Galeria_item;
 
 class DocumentoController extends Controller
 {
-    
+
     public function dropzoneStorage(Request $request){
         $user_id = auth()->user()->id;
         $image= $request->file('file');
         $idCliFor=$request->id_cli_for;
+        $tipo=$request->tipo;
         $extension=$image->extension();
         $tamanho=$image->getSize();
         // Get filename with the extension
@@ -35,6 +38,9 @@ class DocumentoController extends Controller
         $msg='';
         $total_size = 0;
         $path=storage_path('/app/public/documentos/'.$user_id.'/');
+        $limite_tamanho = auth()->user()->id == 4 ? 200000000 : 3000000;
+        $limite_total = auth()->user()->id == 4 ? PHP_INT_MAX : 30000000;
+
         if(Storage::disk('public')->exists('documentos/'.$user_id)){
             $files = scandir($path);
             foreach($files as $t) {
@@ -46,19 +52,19 @@ class DocumentoController extends Controller
                 } else {
                     $size = filesize(rtrim($path, '/') . '/' . $t);
                     $total_size += $size;
-                }   
+                }
             }
-            if($total_size>30000000){
+            if($total_size>$limite_total){
                 $erro=1;
                 $msg='Você atingiu o limite de 30MB';
             }
         }
-        
-        if($tamanho > 3000000){
+
+        if($tamanho > $limite_tamanho){
             $erro=1;
             $msg='Arquivo excede tamanho máximo';
         }
-        
+
         if($erro==0){
             $path = $request->file('file')->storeAs('public/documentos/'.$user_id,$fileNameToStore);
             if(true){
@@ -75,12 +81,26 @@ class DocumentoController extends Controller
 
                     try{
                         $documentos->save();
+                        $documento_id = $documentos->id;
                     }catch (\Exception $e) {
                         return response()->json(['status' => false, 'message' => 'Erro 703, tente novamente mais tarde ou entre em contado com suporte.']);
                     }
 
                     try {
-                        $documentos = Documento::where('id_usuario', $user_id)->where('id_for_cli', $idCliFor)->orderBy('nome')->get();
+                        if($tipo=='galeria'){
+                            $galeria = new Galeria_item;
+                            $galeria->id_galeria=$request->id_galeria;
+                            $galeria->id_usuario=$user_id;
+                            $galeria->id_documento=$documento_id;
+                            $galeria->save();
+                            $documentos = Documento::join('galeria_item', 'documentos.id', '=', 'galeria_item.id_documento')
+                                            ->where('galeria_item.id_galeria', 5)
+                                            ->select('documentos.*')
+                                            ->get();
+                        }else{
+                             $documentos = Documento::where('id_usuario', $user_id)->where('id_for_cli', $idCliFor)->orderBy('nome')->get();
+                        }
+
                     } catch (\Exception $e) {
                         return response()->json(['status' => false, 'message' => 'Erro 701, tente novamente mais tarde ou entre em contado com suporte.']);
                     }
@@ -94,20 +114,35 @@ class DocumentoController extends Controller
 
                     try{
                         $documentos->save();
+                        $documento_id = $documentos->id;
                     }catch (\Exception $e) {
                         return response()->json(['status' => false, 'message' => 'Erro 702, tente novamente mais tarde ou entre em contado com suporte.']);
                     }
 
                     try {
-                        $documentos = Documento::where('id_usuario', $user_id)->where('tipo', '1')->orderBy('nome')->get();
+                        if($tipo=='galeria'){
+                            $galeria = new Galeria_item;
+                            $galeria->id_galeria=$request->id_galeria;
+                            $galeria->id_usuario=$user_id;
+                            $galeria->id_documento=$documento_id;
+                            $galeria->save();
+                            $documentos = Documento::join('galeria_item', 'documentos.id', '=', 'galeria_item.id_documento')
+                                            ->where('galeria_item.id_galeria', 5)
+                                            ->select('documentos.*')
+                                            ->get();
+                        }else{
+                            $documentos = Documento::where('id_usuario', $user_id)->where('tipo', '1')->orderBy('nome')->get();
+                        }
+
                     } catch (\Exception $e) {
                         return response()->json(['status' => false, 'message' => 'Erro 704, tente novamente mais tarde ou entre em contado com suporte.']);
                     }
                 }
+
                 $html='';
                 foreach($documentos as $item){
                     $fileNameParts = explode('.', $item->caminho);
-                    
+
                     $icon='';
                     $tamanhoNome=strlen($item->nome);
                     $br='';
@@ -183,7 +218,7 @@ class DocumentoController extends Controller
         }else{
             return redirect('/');
         }
-       
+
     }
     public function download(Request $request){
         $id=$request->id;
@@ -199,27 +234,47 @@ class DocumentoController extends Controller
     }
 
     public function del_documento(Request $request){
-        $id=$request->id;
-        $tipo=$request->tipo;
+        $id = $request->id;
+        $tipo = $request->tipo;
         $user_id = auth()->user()->id;
-        if($tipo=='2' && $user_id && $id){
+
+        if ($tipo === '2' && $user_id && $id) {
             Documento::where('id', $id)->where('id_usuario', $user_id)->delete();
-        }else if($user_id && $id){
-
-            $caminho = Documento::where('id_usuario', $user_id)->where('id', $id)->first();
-
-            $path='documentos/'.$user_id.'/'.$caminho->caminho;
-            if(Storage::disk('public')->exists($path)){
-                Storage::disk('public')->delete($path);
-                Documento::where('id', $id)->where('id_usuario', $user_id)->delete();
-            }else{
-                return response()->json(['status' => false, 'message' => 'Erro 705, tente novamente mais tarde ou entre em contado com suporte.']);
+        } elseif ($tipo === 'galeria' && $user_id && $id) {
+            $id_galeria = $request->id_galeria;
+            $galeriaItem = Galeria_item::where('id_galeria', $id_galeria)->where('id_documento', $id)->where('id_usuario', $user_id)->first();
+            if ($galeriaItem) {
+                Galeria_item::where('id_galeria', $galeriaItem->id_galeria)
+                    ->where('id_usuario', $user_id)
+                    ->where('id_documento', $id)
+                    ->delete();
             }
-        }else{
-            return response()->json(['status' => false, 'message' => 'Erro 706, tente novamente mais tarde ou entre em contado com suporte.']);
+        } elseif ($user_id && $id) {
+            $caminho = Documento::where('id_usuario', $user_id)->where('id', $id)->first();
+            if ($caminho) {
+                $path = 'documentos/' . $user_id . '/' . $caminho->caminho;
+                if (Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
+                    Documento::where('id', $id)->where('id_usuario', $user_id)->delete();
+
+                    $id_galeria = $request->id_galeria;
+                    $galeriaItem = Galeria_item::where('id_galeria', $id_galeria)->where('id_documento', $id)->where('id_usuario', $user_id)->first();
+                    if ($galeriaItem) {
+                        Galeria_item::where('id_galeria', $galeriaItem->id_galeria)
+                            ->where('id_usuario', $user_id)
+                            ->delete();
+                    }
+                } else {
+                    return response()->json(['status' => false, 'message' => 'Erro 705, tente novamente mais tarde ou entre em contato com o suporte.']);
+                }
+            }
+        } else {
+            return response()->json(['status' => false, 'message' => 'Erro 706, tente novamente mais tarde ou entre em contato com o suporte.']);
         }
+
         return response()->json(['status' => true]);
     }
+
 
     public function escrever(){
         $user_id = auth()->user()->id;
@@ -236,7 +291,7 @@ class DocumentoController extends Controller
         }else{
             return redirect('/');
         }
-       
+
     }
 
     public function add_escrever(Request $request){
@@ -277,7 +332,7 @@ class DocumentoController extends Controller
         }else{
             return redirect('/');
         }
-       
+
     }
 
     public function editar_documento(Request $request){
@@ -299,7 +354,7 @@ class DocumentoController extends Controller
             return response()->json(['status' => false, 'message' => 'Erro 712, tente novamente mais tarde ou entre em contado com suporte.']);
         }
         return response()->json(['status' => true]);
-       
+
     }
 
     public function buscar_documentos(Request $request){
@@ -326,22 +381,22 @@ class DocumentoController extends Controller
             } catch (\Exception $e) {
                 return response()->json(['status' => false, 'message' => 'Erro 717, tente novamente mais tarde ou entre em contado com suporte.']);
             }
-            
+
 
             return view ('documentos/buscar_documentos',['for_cli' => $for_cli,'documentos' => $documentos]);
         }else{
             return redirect('/');
         }
-       
+
     }
-    
-    
+
+
     public function edita_documento(Request $request){
 
         $id = $request->id_documento;
         $nome = $request->nome_documento;
         $user_id = auth()->user()->id;
-        
+
         if($user_id && $nome && $id){
             try {
                 $documentos = Documento::where('id_usuario', $user_id)->where('id', $id)->firstOrFail();
@@ -362,5 +417,103 @@ class DocumentoController extends Controller
         return response()->json(['status' => true]);
     }
 
-    
+    public function galeria(){
+        $user_id = auth()->user()->id;
+        if($user_id){
+            $galeria = DB::table('galeria')
+                            ->leftJoin('galeria_item', 'galeria_item.id_galeria', '=', 'galeria.id')
+                            ->select('galeria.id', 'galeria.nome', 'galeria.descricao', DB::raw('COUNT(galeria_item.id) as total'))
+                            ->where('galeria.id_usuario', $user_id)
+                            ->groupBy('galeria.id', 'galeria.nome', 'galeria.descricao')
+                            ->orderBy('galeria.nome')
+                            ->get();
+
+            return view('documentos/galeria', ['galeria' => $galeria]);
+        } else {
+            return redirect('/');
+        }
+    }
+
+    public function nova_galeria(Request $request){
+        $nome = $request->nome_galeria;
+        $descricao = $request->descricao_galeria;
+        $user_id = auth()->user()->id;
+        $id = $request->id_galeria;
+
+        if ($user_id && $nome) {
+            try {
+                if ($id) {
+                    // Se o ID foi recebido, realiza a atualização
+                    $galeria = Galeria::where('id', $id)->where('id_usuario', $user_id)->first();
+                    if ($galeria) {
+                        $galeria->nome = $nome;
+                        $galeria->descricao = $descricao;
+                        $galeria->save();
+                    } else {
+                        return response()->json(['status' => false, 'message' => 'Galeria não encontrada ou não autorizada.']);
+                    }
+                } else {
+                    // Se não receber ID, cria uma nova galeria
+                    $galeria = new Galeria();
+                    $galeria->id_usuario = $user_id;
+                    $galeria->nome = $nome;
+                    $galeria->descricao = $descricao;
+                    $galeria->save();
+                }
+            } catch (\Exception $e) {
+                return response()->json(['status' => false, 'message' => 'Erro 708, tente novamente mais tarde ou entre em contato com suporte.']);
+            }
+
+            return response()->json(['status' => true]);
+        } else {
+            return response()->json(['status' => false, 'message' => 'Erro 716, tente novamente mais tarde ou entre em contato com suporte.']);
+        }
+    }
+
+
+    public function del_galeria(Request $request){
+        $id = $request->id;
+        $user_id = auth()->user()->id;
+
+        if ($user_id && $id) {
+            DB::beginTransaction();
+
+            try {
+                DB::table('galeria_item')->where('id_galeria', $id)->delete();
+
+                DB::table('galeria')->where('id', $id)->where('id_usuario', $user_id)->delete();
+
+                DB::commit();
+                return response()->json(['status' => true]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json(['status' => false, 'message' => 'Erro ao deletar galeria.', 'error' => $e->getMessage()]);
+            }
+        } else {
+            return response()->json(['status' => false, 'message' => 'Erro 706, tente novamente mais tarde ou entre em contato com o suporte.']);
+        }
+    }
+
+
+    public function perfil(Request $request){
+        $id = $request->id;
+        $user_id = auth()->user()->id;
+        if($user_id){
+            try {
+                $documentos = Documento::join('galeria_item', 'documentos.id', '=', 'galeria_item.id_documento')
+                                            ->where('galeria_item.id_galeria', 5)
+                                            ->select('documentos.*')
+                                            ->get();
+                $galeria = Galeria::where('id_usuario', $user_id)->where('id', $id)->first();
+
+            } catch (\Exception $e) {
+                return response()->json(['status' => false, 'message' => 'Erro 704, tente novamente mais tarde ou entre em contado com suporte.']);
+            }
+
+            return view('documentos/perfil', ['documentos' => $documentos,'galeria' => $galeria]);
+        } else {
+            return redirect('/');
+        }
+    }
+
 }

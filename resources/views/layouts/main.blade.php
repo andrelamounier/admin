@@ -398,6 +398,12 @@
                       <p>Escrever</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{env('APP_URL')}}/documentos/galeria" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Galeria</p>
+                </a>
+              </li>
             </ul>
           </li>
           <li class="nav-item">

@@ -97,6 +97,11 @@ Route::middleware([
     Route::get('/documentos/dropzoneStorageCliFor', [DocumentoController::class,'dropzoneStorageCliFor']);
     Route::match(['get', 'post'],'/documentos/buscar_documentos', [DocumentoController::class,'buscar_documentos']);
     Route::post('/documentos/edita_documento', [DocumentoController::class,'edita_documento']);
+    Route::get('/documentos/galeria', [DocumentoController::class,'galeria']);
+    Route::post('/documentos/nova_galeria', [DocumentoController::class,'nova_galeria']);
+    Route::post('/documentos/del_galeria', [DocumentoController::class,'del_galeria']);
+    Route::get('/documentos/perfil', [DocumentoController::class,'perfil']);
+
 
 
     Route::get('/projetos/cadastros', [ProjetoController::class,'cadastros']);

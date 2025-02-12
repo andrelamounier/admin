@@ -13,7 +13,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Upload</h1>
+            <h1>{{$galeria->nome}}</h1>
           </div>
         </div>
       </div><!-- /.container-fluid -->
@@ -127,9 +127,15 @@
 <script>
 var userId = {{ auth()->user()->id }};
 Dropzone.options.documentosupload = {
-    paramName: "file", // O nome do parâmetro para transferência do arquivo
-    maxFilesize: userId === 4 ? 200 : 10, // 200MB para ID 4, 10MB para os demais
+    paramName: "file",
+    maxFilesize: userId === 4 ? 200 : 10,
     acceptedFiles: 'image/*,.pdf,.doc,.docx,.slt,.rar,.7zip,.zip',
+    init: function () {
+        this.on("sending", function (file, xhr, formData) {
+            formData.append("tipo", 'galeria');
+            formData.append("id_galeria", {{$galeria->id}});
+        });
+    },
     success: function (file, response) {
         if (response.status === 'erro') {
             $(document).Toasts('create', {
@@ -145,11 +151,12 @@ Dropzone.options.documentosupload = {
 };
 
 
+
 function deletar_documento(nome,id){
   Swal.fire({
-  title: 'Deseja realmente deletar o documento ' +nome+' ?',
+  title: 'Deseja remover o documento ' +nome+' da galeria ?',
   showDenyButton: true,
-  denyButtonText: `Deletar`,
+  denyButtonText: `Remover`,
   confirmButtonText: 'Cancelar',
   }).then((result) => {
     if (result.isConfirmed) {
@@ -159,7 +166,7 @@ function deletar_documento(nome,id){
         url:"{{env('APP_URL')}}/documentos/del_documento",
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         type: 'post',
-        data: {'id' : id},
+        data: {'id' : id, tipo:'galeria', id_galeria:{{$galeria->id}} },
         dataType: 'json',
         success: function(response){
               if(response.status){
