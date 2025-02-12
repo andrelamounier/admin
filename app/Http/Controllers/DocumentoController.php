@@ -501,7 +501,7 @@ class DocumentoController extends Controller
         if($user_id){
             try {
                 $documentos = Documento::join('galeria_item', 'documentos.id', '=', 'galeria_item.id_documento')
-                                            ->where('galeria_item.id_galeria', 5)
+                                            ->where('galeria_item.id_galeria',$id)
                                             ->select('documentos.*')
                                             ->get();
                 $galeria = Galeria::where('id_usuario', $user_id)->where('id', $id)->first();
